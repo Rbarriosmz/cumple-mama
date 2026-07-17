@@ -66,6 +66,10 @@ La guía existe para que la gente se sitúe junto a ellos, no para salir en la i
 
 **El transform (`tf`) va en fracciones del ancho y el alto, nunca en píxeles.** La vista previa y el fotograma que captura la cámara tienen resoluciones distintas: un desplazamiento en píxeles colocaría a los abuelos en un sitio distinto del que el invitado eligió. Está verificado colocando a 720×1280 y capturando a 1080×1920.
 
+**El pellizco hace zoom sobre el punto entre los dedos**, no sobre los pies de los abuelos. Anclándolo en los pies, agrandarlos mandaba las cabezas fuera por arriba y no había forma de recuperar los rostros. De ahí viene `applyBox()`, que es el inverso de `centerBox()`: el gesto decide qué caja quiere en pantalla y se despeja el transform hacia atrás.
+
+**La cámara ocupa la pantalla completa** y `coverCrop()` recorta en la captura exactamente la región visible. Si se toca una cosa hay que tocar la otra: en cuanto la pantalla enseñe un recorte distinto del que se guarda, la foto deja de ser la que el invitado encuadró.
+
 **Las guías se dimensionan desde `centerBox()`**, o sea, desde la altura real a la que se dibujan los abuelos. No es un capricho: cuando cada uno calculaba su tamaño por separado, las siluetas salían un 50% más altas que la pareja y la escena dejaba de leerse como gente de pie junta. Si tocas el tamaño de los abuelos, las guías siguen solas.
 
 **La foto existe en dos formatos**: `abuelos.webp` (194 KB, el que se usa) y `abuelos.png` (1,7 MB, respaldo para navegadores sin WebP). Se carga de forma diferida, solo cuando la sección del photocall se acerca a la pantalla, porque es lo más pesado de la página y la mayoría de invitados no llegarán a abrir la cámara. La captura espera a que termine de cargar: sin esa espera, un toque rápido con mala conexión produciría una foto sin ellos y nadie se enteraría.
