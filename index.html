@@ -304,6 +304,19 @@ footer p{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.15
 }
 .pc-warn.show{display:block}
 .pc-warn b{font-weight:500}
+.pc-warn-acts{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.pc-mini{
+  flex:1 1 auto;padding:9px 12px;border-radius:100px;cursor:pointer;
+  border:1px solid rgba(217,113,74,.4);background:#fff;color:var(--melon-deep);
+  font-family:'Jost',sans-serif;font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;
+}
+.pc-mini:active{transform:scale(.97)}
+#pc-diag{margin-top:12px}
+#pc-diag summary{cursor:pointer;font-size:.7rem;opacity:.7}
+#pc-diag pre{
+  margin-top:8px;padding:9px;border-radius:8px;background:rgba(217,113,74,.07);
+  font-size:.62rem;line-height:1.5;white-space:pre-wrap;word-break:break-all;color:var(--ink-soft);
+}
 
 #pc{position:fixed;inset:0;z-index:90;display:none;background:#241811;flex-direction:column}
 #pc.open{display:flex}
@@ -508,7 +521,14 @@ footer p{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.15
         Abrir cámara
       </button>
       <p class="note">La foto se queda en tu móvil. No se sube a ningún sitio.</p>
-      <div class="pc-warn" id="pc-warn"></div>
+      <div class="pc-warn" id="pc-warn">
+        <p id="pc-warn-text"></p>
+        <div class="pc-warn-acts">
+          <button type="button" class="pc-mini" id="pc-copy">Copiar enlace</button>
+          <button type="button" class="pc-mini" id="pc-pick">Elegir foto de la galería</button>
+        </div>
+        <details id="pc-diag"><summary>Detalles técnicos</summary><pre id="pc-diag-body"></pre></details>
+      </div>
       <input type="file" accept="image/*" capture="user" id="pc-file" hidden>
     </div>
   </section>
@@ -698,7 +718,19 @@ footer p{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.15
   var pcFile = document.getElementById('pc-file');
   var pcWarn = document.getElementById('pc-warn');
   var pcMsg = document.getElementById('pc-msg');
-  var stream = null, facing = 'user', shotUrl = null;
+  var stream = null, facing = 'user', shotUrl = null, lastPermState = 'desconocido';
+
+  // Distinguishes "the guest tapped Deny" from "the browser never even asked".
+  // Both surface as NotAllowedError, but only one is the guest's doing, and
+  // telling someone they denied a prompt they never saw is worse than useless.
+  function readPermission() {
+    if (!navigator.permissions || !navigator.permissions.query) return Promise.resolve('no consultable');
+    try {
+      return navigator.permissions.query({ name: 'camera' })
+        .then(function (p) { return p.state; })
+        .catch(function () { return 'no consultable'; });
+    } catch (e) { return Promise.resolve('no consultable'); }
+  }
 
   // The frame is drawn in code, not shipped as a PNG, so it stays sharp at
   // whatever resolution the guest's camera happens to produce.
@@ -769,9 +801,20 @@ footer p{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.15
     pcMsg.classList.add('show');
   }
 
-  function warn(html) {
-    pcWarn.innerHTML = html;
+  function warn(html, err) {
+    document.getElementById('pc-warn-text').innerHTML = html;
     pcWarn.classList.add('show');
+    // Real diagnostics, not a guess: whatever goes wrong on a guest's phone,
+    // this is the only way to find out what actually happened.
+    var d = [
+      'error      : ' + (err ? (err.name || 'sin nombre') + ' - ' + (err.message || '') : 'ninguno'),
+      'mediaDevs  : ' + !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia),
+      'seguro     : ' + window.isSecureContext,
+      'en iframe  : ' + (window.top !== window.self),
+      'permiso    : ' + lastPermState,
+      'navegador  : ' + navigator.userAgent
+    ].join('\n');
+    document.getElementById('pc-diag-body').textContent = d;
   }
 
   function stopCamera() {
@@ -826,28 +869,60 @@ footer p{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.15
   if (pcOpen) {
     var canCamera = !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia);
 
+    var EN_APP =
+      '<b>Este navegador no deja usar la cámara.</b><br>' +
+      'Pasa cuando abres el enlace <b>dentro de WhatsApp</b>: su navegador interno bloquea ' +
+      'la cámara aunque le hayas dado todos los permisos al móvil, y ni siquiera llega a preguntarte.<br><br>' +
+      '<b>Solución:</b> abre esta página en Chrome o Safari. En <b>Android</b>, toca los tres puntos (⋮) ' +
+      'arriba a la derecha y elige «Abrir en Chrome». En <b>iPhone</b>, toca el icono de compartir ' +
+      'abajo y elige «Abrir en Safari». O copia el enlace aquí abajo y pégalo tú en el navegador.';
+
+    function failed(err) {
+      var name = (err && err.name) || '';
+      closePc();
+
+      if (name === 'NotFoundError' || name === 'DevicesNotFoundError') {
+        warn('<b>No se detecta ninguna cámara en este dispositivo.</b> Puedes elegir una foto de tu galería y se le pondrá el marco igual.', err);
+        return;
+      }
+      if (name === 'NotReadableError' || name === 'TrackStartError') {
+        warn('<b>La cámara está ocupada por otra aplicación.</b> Cierra la app de cámara o la videollamada que tengas abierta y vuelve a intentarlo.', err);
+        return;
+      }
+      if (lastPermState === 'denied') {
+        warn('<b>La cámara está bloqueada para esta página.</b> En Chrome, toca el candado 🔒 junto a la dirección y activa la cámara. En Safari, ve a Ajustes → Safari → Cámara y elige «Preguntar». Después vuelve a tocar el botón.', err);
+        return;
+      }
+      // NotAllowedError with a permission state that is not 'denied' means the
+      // page never got asked -- an in-app browser swallowed it.
+      warn(EN_APP, err);
+    }
+
     pcOpen.addEventListener('click', function () {
+      if (!canCamera) { warn(EN_APP, { name: 'sin mediaDevices' }); return; }
+
       pc.classList.add('open');
       pc.classList.remove('shot');
       document.body.style.overflow = 'hidden';
 
-      if (!canCamera) {
-        say('Este navegador no deja usar la cámara. Abriendo tu galería…');
-        setTimeout(function () { closePc(); pcFile.click(); }, 1200);
-        warn('<b>Tu navegador no permite abrir la cámara.</b> Suele pasar dentro de WhatsApp. Toca los tres puntos (⋮) arriba y elige <b>«Abrir en el navegador»</b>, o copia el enlace y pégalo en Chrome o Safari.');
-        return;
-      }
-
       startCamera().catch(function (err) {
-        var denied = err && (err.name === 'NotAllowedError' || err.name === 'SecurityError');
-        say(denied
-          ? 'No diste permiso para la cámara. Puedes elegir una foto de tu galería.'
-          : 'No se pudo abrir la cámara. Puedes elegir una foto de tu galería.');
-        warn(denied
-          ? '<b>Permiso de cámara denegado.</b> Si quieres reintentarlo, permite la cámara para esta página en los ajustes del navegador y vuelve a tocar el botón.'
-          : '<b>No se pudo abrir la cámara.</b> Suele pasar dentro de WhatsApp. Toca los tres puntos (⋮) arriba y elige <b>«Abrir en el navegador»</b>, o pega el enlace en Chrome o Safari.');
-        setTimeout(function () { closePc(); pcFile.click(); }, 1800);
+        readPermission().then(function (state) {
+          lastPermState = state;
+          failed(err);
+        });
       });
+    });
+
+    document.getElementById('pc-pick').addEventListener('click', function () { pcFile.click(); });
+
+    document.getElementById('pc-copy').addEventListener('click', function () {
+      var btn = this;
+      var done = function () { btn.textContent = '¡Enlace copiado!'; setTimeout(function () { btn.textContent = 'Copiar enlace'; }, 2500); };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(location.href).then(done).catch(function () { prompt('Copia el enlace:', location.href); });
+      } else {
+        prompt('Copia el enlace:', location.href);
+      }
     });
 
     document.getElementById('pc-shutter').addEventListener('click', function () {
