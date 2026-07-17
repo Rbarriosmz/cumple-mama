@@ -61,43 +61,24 @@ Si el archivo no existe, el photocall funciona igual: solo el marco y las guías
 
 ## Ajustar el tamaño
 
-Las siluetas guía se calculan **a partir de la altura de esta imagen**, para que todos salgan a la misma escala. Si al poner la foto real se ven grandes o pequeños, se toca `centerBox()` en el `index.html`: los números `0.56` (anchura máxima) y `0.66` (altura máxima), en fracción del tamaño de la foto.
+Las siluetas guía se calculan **a partir de la altura de esta imagen**, para que todos salgan a la misma escala. Si al poner la foto real se ven grandes o pequeños, se tocan los valores `maxW` (anchura) y `maxH` (altura) de esa foto en la lista `PHOTOS` del `index.html`, en fracción de la pantalla.
 
 ---
 
-# 2. Fotos de la galería
+# 2. El álbum de recuerdos
 
-Coloca aquí las fotos con **estos nombres exactos** (en minúsculas, extensión `.jpg`):
+La sección «Álbum de recuerdos» es un carrusel: enseña una foto grande cada vez, pasa sola cada pocos segundos y se puede deslizar con el dedo o con las flechas. Al tocar una foto se abre a pantalla completa.
 
-| Archivo | Dónde aparece | Forma recomendada |
-|---|---|---|
-| `foto-1.jpg` | Marco grande, arriba del todo | Horizontal (apaisada), 3:2 |
-| `foto-2.jpg` | Marco pequeño | Vertical, 4:5 |
-| `foto-3.jpg` | Marco pequeño | Vertical, 4:5 |
-| `foto-4.jpg` | Marco pequeño | Vertical, 4:5 |
-| `foto-5.jpg` | Marco pequeño | Vertical, 4:5 |
+Las fotos del álbum se llaman **`foto-01.webp`, `foto-02.webp`, `foto-03.webp`…** (numeradas con dos cifras). El álbum las busca en orden y se detiene tras dos huecos seguidos, así que **para añadir más basta con dejar la siguiente** (`foto-09.webp`, `foto-10.webp`…) y aparece sola, sin tocar el `index.html`.
 
-## Cómo funciona
+## ⚠️ Importante: tienen que ir en `.webp` y optimizadas
 
-Cada marco enseña un dibujo decorativo mientras no exista la foto. **En cuanto subas el archivo con el nombre correcto, la foto aparece sola** — no hay que tocar el `index.html`.
+Las fotos del móvil son enormes (3–7 MB, 6000 px). Servirlas tal cual tardaría una eternidad en el móvil de los invitados. Por eso el álbum usa **`.webp` reducido a 1600 px** — cada foto baja a ~100–300 KB.
 
-Al revés también vale: si solo pones tres fotos, los otros dos marcos se quedan con el dibujo y la página sigue viéndose bien.
+**Si dejas aquí un `.jpg` o `.jpeg` normal, el álbum NO lo mostrará** (solo busca `.webp`). Los originales `.jpg`/`.jpeg` que dejaste están ignorados por git a propósito (ver `.gitignore`): se quedan en tu equipo, no se suben.
 
-## Consejos
+Para añadir fotos nuevas, lo más fácil: **pásamelas y yo las optimizo y las numero**. O tú mismo, con cualquier conversor a WebP (calidad ~82) y el nombre `foto-NN.webp`.
 
-- **Peso:** que cada foto no pase de ~500 KB. La invitación se abre desde el móvil, muchas veces con datos, y fotos de 5 MB tardarían una eternidad en cargar.
-- **Tamaño:** con 1200 px de ancho sobra. Más grande no se nota y solo pesa.
-- **Recorte:** las fotos se recortan para llenar el marco (centradas). Si la cara queda muy al borde, recorta tú antes de subirla.
-- **Nombres:** ojo con las mayúsculas. `Foto-1.JPG` **no** funciona en GitHub Pages, tiene que ser `foto-1.jpg`.
+## Cómo se ven las fotos de distinta forma
 
-## Cómo subirlas
-
-Copia las fotos en esta carpeta y luego, desde la carpeta del proyecto:
-
-```powershell
-git add fotos/
-git commit -m "Añadir fotos de la galería"
-git push
-```
-
-En un par de minutos aparecen en la web.
+El álbum admite verticales y apaisadas mezcladas: cada una se muestra entera y centrada, con una copia difuminada de sí misma al fondo para rellenar el marco. No se recorta nada.

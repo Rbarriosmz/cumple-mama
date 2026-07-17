@@ -22,14 +22,19 @@ Invitación digital al cumpleaños número 60 de **María Esther Muñoz Medina**
 | `video/` | El vídeo — ver [`video/LEEME.md`](video/LEEME.md). |
 | `musica.mp3` | Música de fondo *(opcional, no incluida — ver abajo)*. |
 
-## Añadir fotos y vídeo
+## Álbum de recuerdos
 
-**No hay que tocar el `index.html`.** Cada marco enseña un dibujo decorativo mientras no exista el archivo, y en cuanto subas uno con el nombre correcto, aparece solo. Si subes tres fotos en vez de cinco, los otros marcos se quedan con el dibujo y la página sigue viéndose bien.
+La sección «Álbum de recuerdos» es un carrusel que muestra una foto grande cada vez, pasa sola y se puede deslizar; al tocar una se abre a pantalla completa. Admite verticales y apaisadas mezcladas (cada una entera y centrada, con una copia difuminada al fondo).
 
-- **Fotos:** `fotos/foto-1.jpg` … `fotos/foto-5.jpg`. La primera es el marco grande. Instrucciones completas en [`fotos/LEEME.md`](fotos/LEEME.md).
+Las fotos se llaman `fotos/foto-01.webp`, `foto-02.webp`, … El álbum las busca en orden y **crece solo**: dejar `foto-09.webp` la hace aparecer, sin tocar el `index.html`.
+
+**Van en `.webp` optimizado a 1600 px**, no en el `.jpg` original del móvil (3–7 MB cada uno). Los originales `.jpg`/`.jpeg` están ignorados por git (`.gitignore`): se quedan en el equipo, no en el repo público. Para añadir más, lo más cómodo es pedir la conversión; o usar cualquier conversor a WebP (calidad ~82) con el nombre `foto-NN.webp`. Detalles en [`fotos/LEEME.md`](fotos/LEEME.md).
+
 - **Vídeo:** `video/video.mp4`. Instrucciones completas en [`video/LEEME.md`](video/LEEME.md).
 
-Las fotos se pueden ampliar tocándolas.
+## Indicador para bajar
+
+Un botón flotante «Desliza para ver más», con flecha animada y alto contraste, guía a los invitados mayores hacia abajo. Se oculta solo al acercarse al final de la página (una pantalla antes, para no taparse con el botón de la cámara).
 
 ## Añadir música de fondo
 

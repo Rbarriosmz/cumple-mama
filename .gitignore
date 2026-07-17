@@ -1,6 +1,15 @@
 # Ajustes locales de Claude Code
 .claude/
 
+# Fotos originales sin optimizar: se quedan en tu equipo, NO en el repo.
+# La web sirve las versiones .webp ligeras (fotos/foto-01.webp ...); subir los
+# originales de varios MB llenaría el repositorio público de forma permanente.
+fotos/foto-*.jpeg
+fotos/foto-*.jpg
+fotos/foto-*.JPG
+fotos/IMG_*.JPG
+fotos/IMG_*.jpg
+
 # Windows
 Thumbs.db
 desktop.ini
