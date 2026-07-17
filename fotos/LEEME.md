@@ -6,18 +6,37 @@ Esta carpeta guarda dos cosas distintas: las fotos de la **galería** y los reco
 
 # 1. Los abuelos del photocall
 
-> ## ⚠️ Si cambias la foto, hay que cambiar DOS archivos
+> ## ⚠️ Si cambias una foto, hay que cambiar DOS archivos
 >
-> Existen `abuelos.webp` **y** `abuelos.png`, con la misma imagen. La web usa el **`.webp`** (194 KB) y solo recurre al `.png` (1,7 MB) en navegadores muy antiguos.
+> Cada foto existe en `.webp` **y** `.png`. La web usa el **`.webp`** y solo recurre al `.png` en navegadores muy antiguos.
 >
 > **Si sustituyes solo el `.png`, la web seguirá enseñando la foto vieja del `.webp`** y parecerá que el cambio no funcionó. Pásame la foto nueva y yo genero el `.webp`, o conviértelo tú en cualquier conversor a WebP con calidad 90.
 
 **Archivos:**
 
 ```
-abuelos.webp   <- el que se usa (194 KB)
-abuelos.png    <- respaldo para navegadores viejos (1,7 MB)
+abuelos.webp    <- foto 1, la que se usa (194 KB)
+abuelos.png     <- foto 1, respaldo (1,7 MB)
+abuelos2.webp   <- foto 2, la que se usa (292 KB)
+abuelos2.png    <- foto 2, respaldo (2,6 MB)
 ```
+
+El invitado elige entre las dos con las miniaturas que salen sobre el botón de disparo. **El selector solo aparece si cargan dos o más**; con una sola, se usa esa y no hay nada que elegir.
+
+## Añadir una tercera foto
+
+En el `index.html`, en la lista `PHOTOS`:
+
+```js
+{ webp:'fotos/abuelos3.webp', png:'fotos/abuelos3.png', label:'...', maxW:0.64, maxH:0.70, guide:'sides' }
+```
+
+| Campo | Para qué sirve |
+|---|---|
+| `maxW`, `maxH` | Tamaño de partida, en fracción de la pantalla. `maxW` **puede pasar de 1** si quieres que la foto se salga por los lados a propósito. |
+| `guide` | `'sides'` pone las siluetas a los lados (para cuando están juntos); `'center'` pone una en medio (para cuando hay hueco entre ellos). |
+
+Cada foto lleva su propio encaje porque una vertical de cuerpo entero y una apaisada de medio cuerpo piden cosas distintas. Con una regla única, la que no estuviera afinada salía diminuta.
 
 Son **los dos juntos, en una misma imagen**, y aparecen en el centro. A los lados, dos siluetas discontinuas marcan dónde colocarse la familia. Así se recrea la foto de los 50 años: ellos en medio, los hijos alrededor.
 

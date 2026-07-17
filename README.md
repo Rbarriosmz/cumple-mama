@@ -56,7 +56,7 @@ Recrea la foto familiar de los 50 años: **los abuelos en el centro** y la famil
 
 | Capa | ¿Sale en la foto guardada? |
 |---|---|
-| **Los abuelos** (`fotos/abuelos.webp`), los dos juntos, en el centro | Sí |
+| **Los abuelos**, los dos juntos, en el centro — se elige entre varias fotos | Sí |
 | **La guía**: dos siluetas de cuerpo entero marcando dónde colocarse | **No** — solo se ve al encuadrar |
 | **El marco** y los textos | Sí |
 
@@ -72,9 +72,13 @@ La guía existe para que la gente se sitúe junto a ellos, no para salir en la i
 
 **Las guías se dimensionan desde `centerBox()`**, o sea, desde la altura real a la que se dibujan los abuelos. No es un capricho: cuando cada uno calculaba su tamaño por separado, las siluetas salían un 50% más altas que la pareja y la escena dejaba de leerse como gente de pie junta. Si tocas el tamaño de los abuelos, las guías siguen solas.
 
-**La foto existe en dos formatos**: `abuelos.webp` (194 KB, el que se usa) y `abuelos.png` (1,7 MB, respaldo para navegadores sin WebP). Se carga de forma diferida, solo cuando la sección del photocall se acerca a la pantalla, porque es lo más pesado de la página y la mayoría de invitados no llegarán a abrir la cámara. La captura espera a que termine de cargar: sin esa espera, un toque rápido con mala conexión produciría una foto sin ellos y nadie se enteraría.
+**Hay varias fotos disponibles** y el invitado elige con las miniaturas que salen sobre el disparador. La lista está en `PHOTOS`, dentro del `index.html`, y **cada una lleva su propio encaje (`maxW`/`maxH`) y su modo de guía**. No es un capricho: una vertical de cuerpo entero y una apaisada de medio cuerpo piden marcos distintos, y con una regla común la que no estuviera afinada salía diminuta. El `maxW` puede pasar de 1 a propósito, para que una foto se salga por los lados y el hueco entre ellos quede a escala humana.
 
-**Al cambiar la foto hay que regenerar los dos archivos.** Sustituir solo el `.png` no cambia nada visible, porque se sigue sirviendo el `.webp` viejo.
+El selector **se construye desde lo que realmente cargó**, no desde `PHOTOS`: ofrecer una miniatura de una foto que falló dejaría a los abuelos en blanco sin explicación. Con una sola foto no aparece el selector.
+
+**Cada foto existe en dos formatos**: `.webp` (el que se usa) y `.png` (respaldo para navegadores sin WebP). Se cargan de forma diferida, solo cuando la sección del photocall se acerca a la pantalla, porque son lo más pesado de la página y la mayoría de invitados no llegarán a abrir la cámara. La captura espera a que terminen: sin esa espera, un toque rápido con mala conexión produciría una foto sin ellos y nadie se enteraría.
+
+**Al cambiar una foto hay que regenerar los dos archivos.** Sustituir solo el `.png` no cambia nada visible, porque se sigue sirviendo el `.webp` viejo.
 
 Cómo preparar el recorte: [`fotos/LEEME.md`](fotos/LEEME.md). Necesita el fondo borrado; un `.jpg` normal saldría con su rectángulo encima de la cámara.
 

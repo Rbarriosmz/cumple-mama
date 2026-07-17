@@ -333,6 +333,21 @@ footer p{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.15
   transition:opacity .5s var(--ease);pointer-events:none;
 }
 #pc.shot .pc-tip,.pc-tip.gone{opacity:0}
+
+/* photo chooser: sits above the shutter bar, out of the way of the gesture */
+.pc-picks{
+  position:absolute;left:0;right:0;bottom:110px;z-index:4;
+  display:none;justify-content:center;gap:10px;padding:0 16px;
+}
+.pc-picks.show{display:flex}
+#pc.shot .pc-picks{display:none}
+.pc-pick{
+  width:52px;height:52px;border-radius:12px;padding:0;overflow:hidden;cursor:pointer;
+  border:2px solid rgba(255,255,255,.4);background:rgba(0,0,0,.45);
+  transition:border-color .2s var(--ease),transform .2s var(--ease);
+}
+.pc-pick img{width:100%;height:100%;object-fit:contain;display:block}
+.pc-pick.on{border-color:#fff;transform:scale(1.08)}
 /* object-fit:cover fills the screen; the capture crops the same region so the
    photo matches what was framed */
 #pc-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
@@ -601,6 +616,7 @@ footer p{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.15
     <canvas id="pc-canvas" aria-hidden="true"></canvas>
     <img id="pc-shot" alt="La foto que acabas de hacer">
     <div class="pc-tip" id="pc-tip">Pellizca para ajustar su tamaño · Arrástralos para moverlos</div>
+    <div class="pc-picks" id="pc-picks"></div>
     <div class="pc-msg" id="pc-msg"></div>
   </div>
   <div class="pc-bar live">
@@ -796,10 +812,23 @@ footer p{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.15
     ctx.restore();
   }
 
-  // The grandparents go in the MIDDLE, together, the way they stand in the
-  // family portrait this recreates. One photo of the pair, background removed.
-  // Missing file -> nothing drawn, the photocall still works with just a frame.
-  var abuelos = null;
+  // The grandparents go in the MIDDLE, the way they stand in the family portrait
+  // this recreates. Each entry is one background-removed photo of the pair.
+  // Missing files are skipped; if none load, the photocall still works with just
+  // the frame.
+  //
+  // fit/guide are per photo on purpose: a tall full-body shot and a wide
+  // half-body one want completely different framing, and one shared rule made
+  // whichever it was not tuned for come out tiny.
+  //   guide 'sides'  -> they stand shoulder to shoulder, family flanks them
+  //   guide 'center' -> there is a gap between them, family stands in it
+  var PHOTOS = [
+    { webp: 'fotos/abuelos.webp',  png: 'fotos/abuelos.png',  label: 'De pie',   maxW: 0.64, maxH: 0.70, guide: 'sides'  },
+    { webp: 'fotos/abuelos2.webp', png: 'fotos/abuelos2.png', label: 'Retrato',  maxW: 1.30, maxH: 0.74, guide: 'center' }
+  ];
+  var shots = [];        // loaded Image per index, null while missing
+  var pick = 0;          // which photo is in use
+  var abuelos = null;    // shots[pick], kept as its own var for the draw path
   var BASE = 27;   // shared floor line, in u, measured up from the bottom edge
 
   // Guest-controlled placement. Kept as FRACTIONS of width/height, never pixels:
@@ -813,11 +842,13 @@ footer p{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.15
   // One shared box so the guides can match the grandparents' real drawn height.
   // Sizing them independently made the outlines tower ~50% over the couple and
   // wrecked the illusion of everyone standing together.
-  // Their size at tf.s === 1. A photo of BOTH of them is wide by nature, so the
-  // width cap is what binds and it decides their height.
+  // Their size at tf.s === 1, using the active photo's own caps. maxW above 1 is
+  // deliberate for the wide shot: it is meant to spill past both edges so the
+  // gap between them lands at human scale.
   function baseFit(w, h) {
     if (!abuelos) return { w: w * 0.5, h: h * 0.55 };
-    var s = Math.min((w * 0.64) / abuelos.naturalWidth, (h * 0.70) / abuelos.naturalHeight);
+    var cfg = PHOTOS[pick];
+    var s = Math.min((w * cfg.maxW) / abuelos.naturalWidth, (h * cfg.maxH) / abuelos.naturalHeight);
     return { w: abuelos.naturalWidth * s, h: abuelos.naturalHeight * s };
   }
 
@@ -886,27 +917,35 @@ footer p{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.15
     // standing beside them, not like a separate scale.
     var figH = b.h * 0.97;
     var half = figH * 0.115;
-    // Anchored to the couple's edges, not to fixed screen positions: once the
-    // guest drags or resizes them, a fixed guide would mark a spot where nobody
-    // is standing any more.
-    var lx = (b.w ? b.x - half * 0.5 : w * 0.17);
-    var rx = (b.w ? b.x + b.w + half * 0.5 : w * 0.83);
+    // Anchored to the couple's own edges, not to fixed screen positions: once
+    // the guest drags or resizes them, a fixed guide would mark a spot where
+    // nobody is standing any more.
+    var spots;
+    if (b.w && PHOTOS[pick].guide === 'center') {
+      spots = [b.x + b.w / 2];                                  // into the gap
+    } else if (b.w) {
+      spots = [b.x - half * 0.5, b.x + b.w + half * 0.5];       // flanking them
+    } else {
+      spots = [w * 0.17, w * 0.83];
+    }
     var pin = function (v) { return Math.max(half * 0.7, Math.min(w - half * 0.7, v)); };
-    lx = pin(lx); rx = pin(rx);
 
     ctx.save();
     ctx.strokeStyle = 'rgba(255,255,255,.62)';
     ctx.lineWidth = Math.max(1, .3 * u);
     ctx.lineJoin = 'round';
     ctx.setLineDash([1.9 * u, 1.4 * u]);
-    ghost(ctx, lx, b.baseY, figH);
-    ghost(ctx, rx, b.baseY, figH);
+    spots.forEach(function (v) { ghost(ctx, pin(v), b.baseY, figH); });
     ctx.setLineDash([]);
     ctx.fillStyle = 'rgba(255,255,255,.9)';
     ctx.font = '300 ' + (2.4 * u) + 'px "Jost", system-ui, sans-serif';
     ctx.textAlign = 'center';
-    ctx.fillText('AQUÍ', lx, b.baseY + 4 * u);
-    ctx.fillText('AQUÍ', rx, b.baseY + 4 * u);
+    // Below the feet works when the guides flank the couple, but the centre
+    // guide sits right where the title is and the label vanished behind it.
+    var labelY = (PHOTOS[pick].guide === 'center')
+      ? Math.max(4 * u, b.baseY - figH - 2 * u)   // above the head instead
+      : b.baseY + 4 * u;
+    spots.forEach(function (v) { ctx.fillText('AQUÍ', pin(v), labelY); });
     ctx.restore();
   }
 
@@ -918,6 +957,31 @@ footer p{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.15
     drawCenter(ctx, w, h);
     if (withGuide) drawGuide(ctx, w, h);
     drawFrame(ctx, w, h);
+  }
+
+  // Built from what actually loaded, never from PHOTOS: offering a thumbnail
+  // that switches to a photo that failed to download would just blank the
+  // couple with no explanation. One surviving photo needs no chooser at all.
+  var picksEl = document.getElementById('pc-picks');
+  function buildPicks() {
+    if (!picksEl) return;
+    picksEl.innerHTML = '';
+    var live = shots.filter(Boolean).length;
+    if (live < 2) { picksEl.classList.remove('show'); return; }
+    shots.forEach(function (img, i) {
+      if (!img) return;
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'pc-pick' + (i === pick ? ' on' : '');
+      b.setAttribute('aria-label', 'Usar la foto: ' + PHOTOS[i].label);
+      var t = document.createElement('img');
+      t.src = img.src;
+      t.alt = '';
+      b.appendChild(t);
+      b.addEventListener('click', function () { choose(i); });
+      picksEl.appendChild(b);
+    });
+    picksEl.classList.add('show');
   }
 
   var demo = document.getElementById('pc-demo-canvas');
@@ -945,18 +1009,44 @@ footer p{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.15
   var abuelosPromise = null;
   function loadAbuelos() {
     if (abuelosPromise) return abuelosPromise;
-    abuelosPromise = new Promise(function (res) {
-      function attempt(src, fallback) {
-        var img = new Image();
-        img.onload = function () { abuelos = img; refreshDemo(); res(true); };
-        img.onerror = fallback
-          ? function () { attempt(fallback, null); }   // no WebP support -> PNG
-          : function () { res(false); };               // no file at all -> frame only
-        img.src = src;
+    abuelosPromise = Promise.all(PHOTOS.map(function (cfg, i) {
+      return new Promise(function (res) {
+        function attempt(src, fallback) {
+          var img = new Image();
+          img.onload = function () { shots[i] = img; res(true); };
+          img.onerror = fallback
+            ? function () { attempt(fallback, null); }   // no WebP support -> PNG
+            : function () { shots[i] = null; res(false); };  // missing -> skipped
+          img.src = src;
+        }
+        attempt(cfg.webp, cfg.png);
+      });
+    })).then(function () {
+      // fall onto whichever photo actually arrived
+      if (!shots[pick]) {
+        for (var i = 0; i < shots.length; i++) { if (shots[i]) { pick = i; break; } }
       }
-      attempt('fotos/abuelos.webp', 'fotos/abuelos.png');
+      abuelos = shots[pick] || null;
+      buildPicks();
+      refreshDemo();
+      return !!abuelos;
     });
     return abuelosPromise;
+  }
+
+  function choose(i) {
+    if (!shots[i] || i === pick) return;
+    pick = i;
+    abuelos = shots[i];
+    // The two photos have different shapes and different default framing, so a
+    // transform tuned for one lands nowhere on the other.
+    resetTf();
+    if (picksEl) {
+      Array.prototype.forEach.call(picksEl.children, function (b, n) {
+        b.classList.toggle('on', n === pick);
+      });
+    }
+    drawOverlay();
   }
 
   var pcSection = document.getElementById('photocall');
