@@ -867,11 +867,21 @@ footer p{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.15
     setTimeout(updateHint, 1600);   // let the hero settle before it appears
   }
 
-  /* ---- video: same idea, reveal only if the file exists ---- */
+  /* ---- video ----
+     Show the player up front and fall back to the placeholder only on a real
+     error. The previous version gated the reveal on `loadedmetadata`, but a
+     display:none video is NOT preloaded by many browsers, so that event never
+     fired and the frame stayed empty ("el video no carga"). Revealing first is
+     self-correcting: a missing file fires `error` and the placeholder returns. */
   var vf = document.getElementById('vframe');
   var vid = vf.querySelector('video');
-  vid.addEventListener('loadedmetadata', function () { vf.classList.add('has-video'); });
-  vid.addEventListener('error', function () { vf.classList.remove('has-video'); });
+  if (vid) {
+    vf.classList.add('has-video');
+    vid.addEventListener('error', function () { vf.classList.remove('has-video'); });
+    // Nudge a metadata fetch so a poster frame shows before the first tap; the
+    // reveal no longer depends on it succeeding.
+    try { vid.load(); } catch (e) {}
+  }
 
   /* ---- entrance animations ---- */
   var risers = document.querySelectorAll('.rise');
