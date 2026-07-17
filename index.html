@@ -906,7 +906,26 @@ footer p{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.15
 
     window.addEventListener('resize', function () { goTo(idx, false); });
 
-    probe(1, 0, [], build);
+    // Discover + load the album photos only when the section nears the viewport.
+    // Loading all of them up front made a first visit ~1.4 MB, which on a weak
+    // mobile connection could stall the whole page ("el servidor tardó mucho").
+    // Deferred, the initial load is ~110 KB.
+    var momentos = document.getElementById('momentos');
+    var albumLoaded = false;
+    function loadAlbum() { if (albumLoaded) return; albumLoaded = true; probe(1, 0, [], build); }
+    if (momentos && 'IntersectionObserver' in window) {
+      var aio = new IntersectionObserver(function (entries) {
+        if (entries.some(function (e) { return e.isIntersecting; })) { aio.disconnect(); loadAlbum(); }
+      }, { rootMargin: '700px' });
+      aio.observe(momentos);
+      // Safety net: if the observer ever fails to fire, the first scroll (they
+      // are clearly browsing) loads it anyway, so the album is never left empty.
+      window.addEventListener('scroll', function once() {
+        window.removeEventListener('scroll', once); loadAlbum();
+      }, { passive: true });
+    } else {
+      loadAlbum();
+    }
   })();
 
   /* ---- scroll hint: guide older guests all the way to the bottom ---- */
