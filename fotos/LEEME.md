@@ -6,10 +6,17 @@ Esta carpeta guarda dos cosas distintas: las fotos de la **galería** y los reco
 
 # 1. Los abuelos del photocall
 
-**Un solo archivo:**
+> ## ⚠️ Si cambias la foto, hay que cambiar DOS archivos
+>
+> Existen `abuelos.webp` **y** `abuelos.png`, con la misma imagen. La web usa el **`.webp`** (194 KB) y solo recurre al `.png` (1,7 MB) en navegadores muy antiguos.
+>
+> **Si sustituyes solo el `.png`, la web seguirá enseñando la foto vieja del `.webp`** y parecerá que el cambio no funcionó. Pásame la foto nueva y yo genero el `.webp`, o conviértelo tú en cualquier conversor a WebP con calidad 90.
+
+**Archivos:**
 
 ```
-abuelos.png
+abuelos.webp   <- el que se usa (194 KB)
+abuelos.png    <- respaldo para navegadores viejos (1,7 MB)
 ```
 
 Son **los dos juntos, en una misma imagen**, y aparecen en el centro. A los lados, dos siluetas discontinuas marcan dónde colocarse la familia. Así se recrea la foto de los 50 años: ellos en medio, los hijos alrededor.

@@ -789,7 +789,12 @@ footer p{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.15
     var u = Math.min(w, h) / 100;
     var baseY = h - BASE * u;
     if (!abuelos) return { baseY: baseY, h: h * 0.55 };
-    var s = Math.min((w * 0.56) / abuelos.naturalWidth, (h * 0.66) / abuelos.naturalHeight);
+    // A photo of BOTH of them is wide by nature, so the width cap is what binds
+    // and it decides their height. Too tight and they read as small and distant
+    // with a lot of empty sky; too loose and the family has nowhere to stand.
+    // Some overlap between them and whoever stands beside is fine -- that is
+    // what people do in a real group photo.
+    var s = Math.min((w * 0.64) / abuelos.naturalWidth, (h * 0.70) / abuelos.naturalHeight);
     var dw = abuelos.naturalWidth * s, dh = abuelos.naturalHeight * s;
     return { x: (w - dw) / 2, y: baseY - dh, w: dw, h: dh, baseY: baseY };
   }
@@ -873,9 +878,38 @@ footer p{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.15
     refreshDemo();
   }
 
-  var im = new Image();
-  im.onload = function () { abuelos = im; refreshDemo(); };
-  im.src = 'fotos/abuelos.png';
+  // The couple's photo is the heaviest thing on the page, and most guests never
+  // open the photocall. Load it only when that section comes near, and prefer
+  // WebP (~194 KB) over the PNG (~1.7 MB) -- over mobile data in Ica that gap
+  // is the difference between the invitation opening fast and not opening.
+  var abuelosPromise = null;
+  function loadAbuelos() {
+    if (abuelosPromise) return abuelosPromise;
+    abuelosPromise = new Promise(function (res) {
+      function attempt(src, fallback) {
+        var img = new Image();
+        img.onload = function () { abuelos = img; refreshDemo(); res(true); };
+        img.onerror = fallback
+          ? function () { attempt(fallback, null); }   // no WebP support -> PNG
+          : function () { res(false); };               // no file at all -> frame only
+        img.src = src;
+      }
+      attempt('fotos/abuelos.webp', 'fotos/abuelos.png');
+    });
+    return abuelosPromise;
+  }
+
+  var pcSection = document.getElementById('photocall');
+  if (pcSection && 'IntersectionObserver' in window) {
+    var pio = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) { loadAbuelos(); pio.disconnect(); }
+      });
+    }, { rootMargin: '600px' });
+    pio.observe(pcSection);
+  } else {
+    loadAbuelos();
+  }
 
   function fitOverlay() {
     var r = pcVideo.getBoundingClientRect();
@@ -1020,7 +1054,14 @@ footer p{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.15
 
     document.getElementById('pc-shutter').addEventListener('click', function () {
       if (!pcVideo.videoWidth) return;
-      renderShot(pcVideo, pcVideo.videoWidth, pcVideo.videoHeight, facing === 'user');
+      // Wait for the couple before compositing. Deferring the download means a
+      // fast tap on a slow connection could otherwise produce a photo without
+      // them in it -- and the guest would never know what they missed.
+      if (!abuelos) say('Un momento…');
+      loadAbuelos().then(function () {
+        pcMsg.classList.remove('show');
+        renderShot(pcVideo, pcVideo.videoWidth, pcVideo.videoHeight, facing === 'user');
+      });
     });
 
     document.getElementById('pc-flip').addEventListener('click', function () {
@@ -1066,8 +1107,10 @@ footer p{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.15
       img.onload = function () {
         pc.classList.add('open');
         document.body.style.overflow = 'hidden';
-        renderShot(img, img.naturalWidth, img.naturalHeight, false);
-        URL.revokeObjectURL(img.src);
+        loadAbuelos().then(function () {          // same guarantee on the gallery path
+          renderShot(img, img.naturalWidth, img.naturalHeight, false);
+          URL.revokeObjectURL(img.src);
+        });
       };
       img.onerror = function () { say('No se pudo leer esa imagen.'); };
       img.src = URL.createObjectURL(f);
