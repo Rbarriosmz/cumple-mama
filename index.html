@@ -960,46 +960,109 @@ footer p{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.15
       }
     }
 
-    // Confetti on a canvas covering the top of the page.
+    // One canvas, three systems: falling confetti, rising balloons (some pop),
+    // and firework bursts. All in the invitation's melon/gold palette so the
+    // welcome feels festive without clashing with the page.
     var canvas = document.getElementById('confetti');
     var ctx = canvas.getContext('2d');
-    var COLORS = ['#F4A07A', '#D9714A', '#C9A46B', '#E38FA6', '#F6C9AE', '#7FB0A6'];
-    var pieces = [], raf = null, running = false;
+    var CONF = ['#F4A07A', '#D9714A', '#C9A46B', '#E38FA6', '#F6C9AE', '#EBC57E'];
+    var BALL = ['#F4A07A', '#E38FA6', '#F6C9AE', '#EBB27A', '#F2B6C6', '#E9C784'];
+    var FIRE = ['#C9A46B', '#E8C583', '#F4A07A', '#F6C9AE', '#EAD9A0', '#E38FA6'];
+    var W = 0, H = 0;
+    var conf = [], balloons = [], sparks = [];
+    var raf = null, running = false, frame = 0, spawning = true;
+    var rnd = function (a, b) { return a + Math.random() * (b - a); };
+    var pick = function (a) { return a[(Math.random() * a.length) | 0]; };
 
-    function size() { canvas.width = window.innerWidth; canvas.height = Math.round(window.innerHeight * 0.9); }
-    function make(top) {
-      return {
-        x: Math.random() * canvas.width,
-        y: top ? Math.random() * -canvas.height : Math.random() * canvas.height,
-        w: 6 + Math.random() * 8, h: 8 + Math.random() * 10,
-        vy: 1 + Math.random() * 2.2, vx: (Math.random() - 0.5) * 1.2,
-        rot: Math.random() * Math.PI, vr: (Math.random() - 0.5) * 0.2, sway: Math.random() * Math.PI,
-        color: COLORS[(Math.random() * COLORS.length) | 0], round: Math.random() < 0.5
-      };
+    function size() {
+      W = window.innerWidth; H = window.innerHeight;
+      canvas.width = W; canvas.height = H;
+      canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
     }
+    size();
+
+    function newConfetti(top) {
+      return { x: rnd(0, W), y: top ? rnd(-H, 0) : rnd(0, H),
+        w: rnd(6, 14), h: rnd(8, 18), vy: rnd(1, 3.2), vx: rnd(-0.6, 0.6),
+        rot: rnd(0, Math.PI), vr: rnd(-0.1, 0.1), sway: rnd(0, Math.PI),
+        color: pick(CONF), round: Math.random() < 0.5 };
+    }
+    function newBalloon() {
+      var r = rnd(15, 27);
+      return { x: rnd(r * 2, W - r * 2), y: H + r * 2, r: r, vy: rnd(0.7, 1.5),
+        phase: rnd(0, Math.PI * 2), amp: rnd(6, 16), color: pick(BALL),
+        popY: Math.random() < 0.55 ? rnd(H * 0.12, H * 0.5) : -999 };  // ~half pop, rest drift off
+    }
+    function burst(x, y, color, n, spread) {
+      for (var i = 0; i < n; i++) {
+        var a = (Math.PI * 2 * i) / n + rnd(-0.15, 0.15), sp = rnd(1.5, spread);
+        sparks.push({ x: x, y: y, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp,
+          life: rnd(45, 80), max: 80, color: color || pick(FIRE), size: rnd(2, 3.4) });
+      }
+      if (sparks.length > 700) sparks.splice(0, sparks.length - 700);
+    }
+
     function draw() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      for (var i = 0; i < pieces.length; i++) {
-        var p = pieces[i];
+      ctx.clearRect(0, 0, W, H);
+      frame++;
+
+      // spawn cadence (intense + durable while spawning is on)
+      if (spawning) {
+        if (frame % 20 === 0 && balloons.length < 18) balloons.push(newBalloon());
+        if (frame % 46 === 0) burst(rnd(W * 0.18, W * 0.82), rnd(H * 0.12, H * 0.42), pick(FIRE), 34, 5.2);
+      }
+
+      // confetti
+      for (var i = 0; i < conf.length; i++) {
+        var p = conf[i];
         p.sway += 0.02; p.x += p.vx + Math.sin(p.sway) * 0.6; p.y += p.vy; p.rot += p.vr;
-        if (p.y > canvas.height + 20) { p.y = -20; p.x = Math.random() * canvas.width; }
+        if (p.y > H + 20) { p.y = -20; p.x = rnd(0, W); }
         ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.rot); ctx.globalAlpha = 0.9; ctx.fillStyle = p.color;
         if (p.round) { ctx.beginPath(); ctx.arc(0, 0, p.w / 2, 0, Math.PI * 2); ctx.fill(); }
         else ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
         ctx.restore();
       }
+
+      // balloons
+      for (var b = balloons.length - 1; b >= 0; b--) {
+        var o = balloons[b];
+        o.y -= o.vy; o.phase += 0.03;
+        var bx = o.x + Math.sin(o.phase) * o.amp;
+        if (o.popY > 0 && o.y <= o.popY) { burst(bx, o.y, o.color, 16, 4); balloons.splice(b, 1); continue; }
+        if (o.y < -o.r * 3) { balloons.splice(b, 1); continue; }
+        ctx.save(); ctx.globalAlpha = 0.92; ctx.translate(bx, o.y);
+        ctx.fillStyle = o.color;
+        ctx.beginPath(); ctx.ellipse(0, 0, o.r * 0.85, o.r, 0, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = 'rgba(255,255,255,.35)';
+        ctx.beginPath(); ctx.ellipse(-o.r * 0.28, -o.r * 0.32, o.r * 0.2, o.r * 0.32, -0.4, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = o.color;
+        ctx.beginPath(); ctx.moveTo(-3, o.r * 0.98); ctx.lineTo(3, o.r * 0.98); ctx.lineTo(0, o.r * 1.16); ctx.closePath(); ctx.fill();
+        ctx.strokeStyle = 'rgba(150,110,80,.4)'; ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.moveTo(0, o.r * 1.16); ctx.quadraticCurveTo(o.r * 0.5, o.r * 1.8, 0, o.r * 2.4); ctx.stroke();
+        ctx.restore();
+      }
+
+      // sparks (fireworks + balloon pops)
+      for (var s = sparks.length - 1; s >= 0; s--) {
+        var k = sparks[s];
+        k.vy += 0.04; k.x += k.vx; k.y += k.vy; k.life--;
+        if (k.life <= 0) { sparks.splice(s, 1); continue; }
+        ctx.save(); ctx.globalAlpha = Math.max(0, k.life / k.max); ctx.fillStyle = k.color;
+        ctx.beginPath(); ctx.arc(k.x, k.y, k.size, 0, Math.PI * 2); ctx.fill();
+        ctx.restore();
+      }
+
       raf = requestAnimationFrame(draw);
     }
     function start() { if (running || reduce) return; running = true; draw(); }
-    function stop() { running = false; if (raf) cancelAnimationFrame(raf); raf = null; ctx.clearRect(0, 0, canvas.width, canvas.height); }
+    function stop() { running = false; if (raf) cancelAnimationFrame(raf); raf = null; ctx.clearRect(0, 0, W, H); }
 
     if (!reduce) {
-      size();
-      for (var k = 0; k < 110; k++) pieces.push(make(true));
+      for (var c = 0; c < 90; c++) conf.push(newConfetti(true));
       start();
       window.addEventListener('resize', size);
-      // a warm welcome burst, then let it settle so it never drains the battery
-      setTimeout(stop, 8000);
+      setTimeout(function () { spawning = false; }, 16000);  // stop launching new ones
+      setTimeout(stop, 22000);                                // let the last ones finish, then rest
     }
 
     // Fade the whole intro away as they scroll into the invitation.
