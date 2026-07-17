@@ -284,6 +284,71 @@ section{padding:60px 0}
 footer{text-align:center;padding:48px 24px 68px;border-top:1px solid var(--melon-mist);margin-top:44px}
 footer p{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.15rem;color:var(--ink-soft);margin-top:14px}
 
+/* ---------- photocall ---------- */
+.pc-card{
+  background:#fff;border:1px solid var(--melon-mist);border-radius:22px;
+  padding:26px 24px;box-shadow:var(--shadow);text-align:center;
+}
+.pc-demo{
+  position:relative;width:100%;max-width:230px;margin:0 auto 22px;
+  aspect-ratio:3/4;border-radius:14px;overflow:hidden;
+  background:linear-gradient(150deg,#F3C9AE,#E8A583);
+}
+.pc-demo canvas{position:absolute;inset:0;width:100%;height:100%}
+.pc-demo-ico{position:absolute;inset:0;display:grid;place-items:center;color:rgba(255,255,255,.75)}
+.pc-demo-ico svg{width:38px;height:38px;fill:none;stroke:currentColor;stroke-width:1.1;stroke-linecap:round;stroke-linejoin:round}
+.pc-warn{
+  margin-top:16px;padding:13px 15px;border-radius:12px;text-align:left;
+  background:#FFF1E8;border:1px solid rgba(217,113,74,.28);
+  font-size:.79rem;color:var(--melon-deep);line-height:1.55;display:none;
+}
+.pc-warn.show{display:block}
+.pc-warn b{font-weight:500}
+
+#pc{position:fixed;inset:0;z-index:90;display:none;background:#241811;flex-direction:column}
+#pc.open{display:flex}
+.pc-stage{position:relative;flex:1;min-height:0;display:grid;place-items:center;overflow:hidden}
+#pc-video,#pc-shot{max-width:100%;max-height:100%;display:block}
+#pc-video.mirror{transform:scaleX(-1)}
+#pc-canvas{position:absolute;pointer-events:none}
+#pc-shot{display:none}
+#pc.shot #pc-video,#pc.shot #pc-canvas{display:none}
+#pc.shot #pc-shot{display:block}
+.pc-bar{
+  flex:none;display:flex;align-items:center;justify-content:center;gap:24px;
+  padding:18px 20px calc(18px + env(safe-area-inset-bottom,0px));
+  background:rgba(0,0,0,.4);
+}
+.pc-bar.done{display:none}
+#pc.shot .pc-bar.live{display:none}
+#pc.shot .pc-bar.done{display:flex}
+.pc-btn{
+  width:46px;height:46px;border-radius:50%;flex:none;
+  border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.1);
+  color:#fff;cursor:pointer;display:grid;place-items:center;
+}
+.pc-btn svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+#pc-shutter{
+  width:68px;height:68px;border-radius:50%;flex:none;padding:4px;
+  border:2px solid rgba(255,255,255,.9);background:transparent;cursor:pointer;
+  transition:transform .15s var(--ease);
+}
+#pc-shutter:active{transform:scale(.9)}
+#pc-shutter span{display:block;width:100%;height:100%;border-radius:50%;background:#fff}
+.pc-action{
+  padding:13px 24px;border-radius:100px;cursor:pointer;
+  border:1px solid rgba(255,255,255,.35);background:transparent;color:#fff;
+  font-family:'Jost',sans-serif;font-size:.74rem;font-weight:400;
+  letter-spacing:.14em;text-transform:uppercase;
+}
+.pc-action.primary{background:#fff;color:#241811;border-color:#fff}
+.pc-msg{
+  position:absolute;left:18px;right:18px;bottom:18px;z-index:3;
+  background:rgba(0,0,0,.78);color:#fff;padding:15px;border-radius:12px;
+  font-size:.8rem;line-height:1.55;text-align:center;display:none;
+}
+.pc-msg.show{display:block}
+
 /* ---------- lightbox ---------- */
 #lb{
   position:fixed;inset:0;z-index:80;display:none;
@@ -430,6 +495,24 @@ footer p{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.15
     </div>
   </section>
 
+  <section id="photocall">
+    <h2 class="title rise">Photocall</h2>
+    <p class="subtitle rise">Hazte una foto con el marco de la fiesta</p>
+    <div class="pc-card rise">
+      <div class="pc-demo">
+        <div class="pc-demo-ico"><svg viewBox="0 0 24 24"><path d="M3 8a2 2 0 0 1 2-2h2.5l1.2-1.8A1 1 0 0 1 9.5 4h5a1 1 0 0 1 .8.2L16.5 6H19a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><circle cx="12" cy="12" r="3.4"/></svg></div>
+        <canvas id="pc-demo-canvas" width="345" height="460" aria-hidden="true"></canvas>
+      </div>
+      <button class="btn btn-primary" id="pc-open" style="width:100%">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8a2 2 0 0 1 2-2h2.5l1.2-1.8A1 1 0 0 1 9.5 4h5a1 1 0 0 1 .8.2L16.5 6H19a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><circle cx="12" cy="12" r="3.4"/></svg>
+        Abrir cámara
+      </button>
+      <p class="note">La foto se queda en tu móvil. No se sube a ningún sitio.</p>
+      <div class="pc-warn" id="pc-warn"></div>
+      <input type="file" accept="image/*" capture="user" id="pc-file" hidden>
+    </div>
+  </section>
+
   <section id="detalles">
     <h2 class="title rise">Los detalles</h2>
     <p class="subtitle rise">Todo lo que necesitas saber</p>
@@ -476,6 +559,31 @@ footer p{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.15
   <svg class="orn sm"><use href="#flourish"/></svg>
   <p>Te esperamos</p>
 </footer>
+
+<div id="pc" role="dialog" aria-modal="true" aria-label="Photocall">
+  <div class="pc-stage">
+    <video id="pc-video" playsinline autoplay muted></video>
+    <canvas id="pc-canvas" aria-hidden="true"></canvas>
+    <img id="pc-shot" alt="La foto que acabas de hacer">
+    <div class="pc-msg" id="pc-msg"></div>
+  </div>
+  <div class="pc-bar live">
+    <button class="pc-btn" id="pc-flip" aria-label="Cambiar de cámara">
+      <svg viewBox="0 0 24 24"><path d="M20 12a8 8 0 0 1-13.7 5.6M4 12a8 8 0 0 1 13.7-5.6"/><path d="M4 18v-4h4M20 6v4h-4"/></svg>
+    </button>
+    <button id="pc-shutter" aria-label="Hacer la foto"><span></span></button>
+    <button class="pc-btn" id="pc-close" aria-label="Cerrar la cámara">
+      <svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    </button>
+  </div>
+  <div class="pc-bar done">
+    <button class="pc-action" id="pc-retry">Repetir</button>
+    <button class="pc-action primary" id="pc-save">Guardar</button>
+    <button class="pc-btn" id="pc-close2" aria-label="Cerrar">
+      <svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    </button>
+  </div>
+</div>
 
 <div id="lb" role="dialog" aria-modal="true" aria-label="Foto ampliada">
   <button id="lb-close" aria-label="Cerrar"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
@@ -576,6 +684,227 @@ footer p{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.15
     setTimeout(revealAll, 3000);
   } else {
     revealAll();
+  }
+
+  /* ---- photocall ----
+     Camera stays entirely on the guest's device: nothing is uploaded. A public
+     page cannot write to the repo without shipping a GitHub token in plain
+     sight, so saving locally is the only safe option. ---- */
+  var pcOpen = document.getElementById('pc-open');
+  var pc = document.getElementById('pc');
+  var pcVideo = document.getElementById('pc-video');
+  var pcCanvas = document.getElementById('pc-canvas');
+  var pcShot = document.getElementById('pc-shot');
+  var pcFile = document.getElementById('pc-file');
+  var pcWarn = document.getElementById('pc-warn');
+  var pcMsg = document.getElementById('pc-msg');
+  var stream = null, facing = 'user', shotUrl = null;
+
+  // The frame is drawn in code, not shipped as a PNG, so it stays sharp at
+  // whatever resolution the guest's camera happens to produce.
+  function drawFrame(ctx, w, h) {
+    var u = Math.min(w, h) / 100;
+    ctx.save();
+    ctx.textAlign = 'center';
+
+    var scrim = ctx.createLinearGradient(0, h - 36 * u, 0, h);
+    scrim.addColorStop(0, 'rgba(58,30,18,0)');
+    scrim.addColorStop(1, 'rgba(58,30,18,.75)');
+    ctx.fillStyle = scrim;
+    ctx.fillRect(0, h - 36 * u, w, 36 * u);
+
+    ctx.strokeStyle = 'rgba(238,209,160,.85)';
+    ctx.lineWidth = Math.max(1, .32 * u);
+    ctx.strokeRect(3.2 * u, 3.2 * u, w - 6.4 * u, h - 6.4 * u);
+    ctx.strokeStyle = 'rgba(238,209,160,.45)';
+    ctx.lineWidth = Math.max(1, .2 * u);
+    ctx.strokeRect(4.7 * u, 4.7 * u, w - 9.4 * u, h - 9.4 * u);
+
+    // Vertical rhythm is measured up from the bottom edge. Keep the last line
+    // clear of the inner gold rule, which sits at 4.7u -- anything below ~7u
+    // collides with it.
+    ctx.fillStyle = '#fff';
+    ctx.font = '400 ' + (10 * u) + 'px "Cormorant Garamond", Georgia, serif';
+    ctx.fillText('60 años', w / 2, h - 20 * u);
+
+    ctx.fillStyle = 'rgba(255,255,255,.92)';
+    ctx.font = '300 ' + (2.9 * u) + 'px "Jost", system-ui, sans-serif';
+    ctx.fillText('M A R Í A   E S T H E R', w / 2, h - 14 * u);
+
+    ctx.strokeStyle = 'rgba(238,209,160,.7)';
+    ctx.lineWidth = Math.max(1, .18 * u);
+    ctx.beginPath();
+    ctx.moveTo(w / 2 - 17 * u, h - 11.2 * u); ctx.lineTo(w / 2 - 6 * u, h - 11.2 * u);
+    ctx.moveTo(w / 2 + 6 * u, h - 11.2 * u); ctx.lineTo(w / 2 + 17 * u, h - 11.2 * u);
+    ctx.stroke();
+
+    ctx.fillStyle = 'rgba(240,214,170,.95)';
+    ctx.font = '300 ' + (2.4 * u) + 'px "Jost", system-ui, sans-serif';
+    ctx.fillText('2 · AGOSTO · 2026', w / 2, h - 7.6 * u);
+    ctx.restore();
+  }
+
+  // little sample of the frame on the card, so guests see it before opening
+  var demo = document.getElementById('pc-demo-canvas');
+  if (demo && demo.getContext) {
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(function () { drawFrame(demo.getContext('2d'), demo.width, demo.height); });
+    } else {
+      drawFrame(demo.getContext('2d'), demo.width, demo.height);
+    }
+  }
+
+  function fitOverlay() {
+    var r = pcVideo.getBoundingClientRect();
+    if (!r.width || !r.height) return;
+    pcCanvas.width = Math.round(r.width);
+    pcCanvas.height = Math.round(r.height);
+    pcCanvas.style.width = r.width + 'px';
+    pcCanvas.style.height = r.height + 'px';
+    drawFrame(pcCanvas.getContext('2d'), pcCanvas.width, pcCanvas.height);
+  }
+
+  function say(text) {
+    pcMsg.textContent = text;
+    pcMsg.classList.add('show');
+  }
+
+  function warn(html) {
+    pcWarn.innerHTML = html;
+    pcWarn.classList.add('show');
+  }
+
+  function stopCamera() {
+    if (stream) {
+      stream.getTracks().forEach(function (t) { t.stop(); });
+      stream = null;
+    }
+  }
+
+  function startCamera() {
+    stopCamera();
+    return navigator.mediaDevices.getUserMedia({
+      video: { facingMode: facing, width: { ideal: 1280 }, height: { ideal: 1280 } },
+      audio: false
+    }).then(function (s) {
+      stream = s;
+      pcVideo.srcObject = s;
+      pcVideo.classList.toggle('mirror', facing === 'user');
+      return pcVideo.play().catch(function () {});
+    }).then(function () {
+      return new Promise(function (res) {
+        if (pcVideo.videoWidth) return res();
+        pcVideo.addEventListener('loadedmetadata', function () { res(); }, { once: true });
+      });
+    }).then(function () {
+      pcMsg.classList.remove('show');
+      fitOverlay();
+    });
+  }
+
+  function closePc() {
+    stopCamera();
+    pc.classList.remove('open', 'shot');
+    document.body.style.overflow = '';
+    if (shotUrl) { URL.revokeObjectURL(shotUrl); shotUrl = null; }
+  }
+
+  function renderShot(source, sw, sh, mirrored) {
+    var c = document.createElement('canvas');
+    c.width = sw; c.height = sh;
+    var cx = c.getContext('2d');
+    if (mirrored) { cx.translate(sw, 0); cx.scale(-1, 1); }
+    cx.drawImage(source, 0, 0, sw, sh);
+    cx.setTransform(1, 0, 0, 1, 0, 0);
+    drawFrame(cx, sw, sh);
+    if (shotUrl) URL.revokeObjectURL(shotUrl);
+    shotUrl = c.toDataURL('image/jpeg', 0.92);
+    pcShot.src = shotUrl;
+    pc.classList.add('shot');
+  }
+
+  if (pcOpen) {
+    var canCamera = !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia);
+
+    pcOpen.addEventListener('click', function () {
+      pc.classList.add('open');
+      pc.classList.remove('shot');
+      document.body.style.overflow = 'hidden';
+
+      if (!canCamera) {
+        say('Este navegador no deja usar la cámara. Abriendo tu galería…');
+        setTimeout(function () { closePc(); pcFile.click(); }, 1200);
+        warn('<b>Tu navegador no permite abrir la cámara.</b> Suele pasar dentro de WhatsApp. Toca los tres puntos (⋮) arriba y elige <b>«Abrir en el navegador»</b>, o copia el enlace y pégalo en Chrome o Safari.');
+        return;
+      }
+
+      startCamera().catch(function (err) {
+        var denied = err && (err.name === 'NotAllowedError' || err.name === 'SecurityError');
+        say(denied
+          ? 'No diste permiso para la cámara. Puedes elegir una foto de tu galería.'
+          : 'No se pudo abrir la cámara. Puedes elegir una foto de tu galería.');
+        warn(denied
+          ? '<b>Permiso de cámara denegado.</b> Si quieres reintentarlo, permite la cámara para esta página en los ajustes del navegador y vuelve a tocar el botón.'
+          : '<b>No se pudo abrir la cámara.</b> Suele pasar dentro de WhatsApp. Toca los tres puntos (⋮) arriba y elige <b>«Abrir en el navegador»</b>, o pega el enlace en Chrome o Safari.');
+        setTimeout(function () { closePc(); pcFile.click(); }, 1800);
+      });
+    });
+
+    document.getElementById('pc-shutter').addEventListener('click', function () {
+      if (!pcVideo.videoWidth) return;
+      renderShot(pcVideo, pcVideo.videoWidth, pcVideo.videoHeight, facing === 'user');
+    });
+
+    document.getElementById('pc-flip').addEventListener('click', function () {
+      facing = (facing === 'user') ? 'environment' : 'user';
+      startCamera().catch(function () {
+        facing = (facing === 'user') ? 'environment' : 'user';
+        say('Tu dispositivo solo tiene una cámara disponible.');
+        startCamera().catch(function () {});
+      });
+    });
+
+    document.getElementById('pc-retry').addEventListener('click', function () {
+      pc.classList.remove('shot');
+      if (!stream && canCamera) { startCamera().catch(function () {}); }
+    });
+
+    document.getElementById('pc-save').addEventListener('click', function () {
+      if (!shotUrl) return;
+      var a = document.createElement('a');
+      a.href = shotUrl;
+      a.download = 'photocall-maria-esther-60.jpg';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      say('Guardada. Si no la ves, mantén pulsada la foto y elige «Guardar imagen».');
+      setTimeout(function () { pcMsg.classList.remove('show'); }, 4500);
+    });
+
+    document.getElementById('pc-close').addEventListener('click', closePc);
+    document.getElementById('pc-close2').addEventListener('click', closePc);
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && pc.classList.contains('open')) closePc();
+    });
+    window.addEventListener('resize', function () {
+      if (pc.classList.contains('open') && !pc.classList.contains('shot')) fitOverlay();
+    });
+
+    // fallback path: guest picks an existing photo, frame still gets applied
+    pcFile.addEventListener('change', function () {
+      var f = pcFile.files && pcFile.files[0];
+      if (!f) return;
+      var img = new Image();
+      img.onload = function () {
+        pc.classList.add('open');
+        document.body.style.overflow = 'hidden';
+        renderShot(img, img.naturalWidth, img.naturalHeight, false);
+        URL.revokeObjectURL(img.src);
+      };
+      img.onerror = function () { say('No se pudo leer esa imagen.'); };
+      img.src = URL.createObjectURL(f);
+      pcFile.value = '';
+    });
   }
 
   /* ---- optional background music ---- */

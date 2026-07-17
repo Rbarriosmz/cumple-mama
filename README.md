@@ -48,6 +48,21 @@ El botón de play/pausa aparece solo si el archivo carga correctamente; si no ex
 - WhatsApp cachea la tarjeta de previsualización. Si cambias `og-image.png` después de haber compartido el enlace, la tarjeta antigua puede seguir apareciendo un tiempo.
 - El diseño respeta `prefers-reduced-motion` para quien tenga las animaciones desactivadas.
 
+## Photocall
+
+Un botón abre la cámara del móvil y dibuja encima un marco con «60 años · María Esther · 2 · Agosto · 2026». El invitado hace la foto y la guarda en su carrete.
+
+**La foto no sale del dispositivo.** No se sube a ninguna parte, y esto no es una limitación temporal: para que la web escribiera en este repositorio habría que incrustar un token de escritura de GitHub en el `index.html`, que es público. Cualquiera podría cogerlo y borrar el repo. Si algún día quieres recibir las fotos automáticamente, hace falta un servidor intermedio que guarde el token — no se puede hacer desde una página estática.
+
+Detalles de implementación:
+
+- El marco se dibuja **con código en un `<canvas>`**, no es un PNG, así que sale nítido a cualquier resolución de cámara. Está verificado en 3:4, 4:3 y 9:16.
+- Las medidas del marco van en unidades de `u = min(ancho, alto) / 100`. **La última línea de texto no puede bajar de `7u` desde el borde inferior** o choca con la regla dorada interior, que está a `4.7u`.
+- La cámara frontal se muestra y se captura **en espejo**, como en cualquier app de selfies, pero el marco se dibuja sin espejar para que el texto no salga del revés.
+- Si la cámara falla o se deniega el permiso, hay **plan B automático**: se abre el selector de fotos del móvil y se le aplica el mismo marco.
+- El navegador interno de WhatsApp suele bloquear la cámara. En ese caso se muestra un aviso explicando cómo abrir la página en Chrome o Safari.
+- La cámara se apaga al cerrar (`track.stop()`), para no dejar el piloto encendido.
+
 ## Privacidad
 
 GitHub Pages gratuito obliga a que el repositorio sea público, así que **cualquiera con el enlace puede abrir la invitación**, y aquí hay un nombre completo, una dirección, la fecha en que la familia estará allí y un número de WhatsApp.
