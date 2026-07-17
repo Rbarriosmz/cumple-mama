@@ -10,6 +10,11 @@ fotos/foto-*.JPG
 fotos/IMG_*.JPG
 fotos/IMG_*.jpg
 
+# Vídeo original sin comprimir: solo va al repo la versión web ligera
+# (video/video.mp4). El original de decenas de MB se queda en tu equipo.
+video/*.mp4
+!video/video.mp4
+
 # Windows
 Thumbs.db
 desktop.ini

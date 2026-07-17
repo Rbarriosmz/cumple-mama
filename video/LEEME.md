@@ -14,9 +14,20 @@ Nunca se reproduce en automático: hace falta que la persona le dé al play.
 
 ## Consejos importantes
 
-- **Peso: máximo ~50 MB, y cuanto menos mejor.** GitHub rechaza archivos de más de 100 MB, y además la gente abrirá esto desde el móvil con datos. Un vídeo de 1-2 minutos bien comprimido cabe de sobra.
-- **Formato:** `.mp4` con códec H.264. Es el que reproducen todos los móviles. Si lo grabaste con el iPhone puede salir en `.mov` o HEVC — conviértelo a `.mp4`/H.264 o mucha gente no lo verá.
-- **Forma:** horizontal (16:9) queda mejor en el marco. Si es vertical se recortará por los lados.
+- **Peso: cuanto menos, mejor.** La gente lo abrirá desde el móvil con datos. El vídeo actual se comprimió de 90 MB a ~3,7 MB (720p, H.264) sin pérdida visible.
+- **Formato:** `.mp4` con códec H.264 y `-pix_fmt yuv420p`. Es el que reproducen todos los móviles, iPhone incluido.
+- **Nombre:** el archivo que se publica es **`video.mp4`** (sin acentos ni ñ, que dan problemas en las URLs de GitHub Pages). Si dejas otro `.mp4` con otro nombre, git lo ignora (ver `.gitignore`) y no se sube.
+- **Forma:** horizontal (16:9) queda mejor en el marco.
+
+## Cómo se comprimió (por si hay que repetirlo)
+
+Con [ffmpeg](https://ffmpeg.org) instalado:
+
+```powershell
+ffmpeg -i TU_VIDEO.mp4 -vf "scale=-2:720" -c:v libx264 -crf 25 -preset medium -c:a aac -b:a 128k -movflags +faststart -pix_fmt yuv420p video.mp4
+```
+
+`-movflags +faststart` es importante: coloca el índice al principio para que el vídeo empiece a verse sin descargarse entero.
 
 ## Cómo subirlo
 
