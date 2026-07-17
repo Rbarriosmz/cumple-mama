@@ -263,6 +263,20 @@ section{padding:60px 0}
   content:"";position:absolute;inset:10px;z-index:0;border-radius:9px;
   border:1px dashed rgba(217,113,74,.3);
 }
+/* the loop plays muted (browsers block audible autoplay); this offers one clear
+   tap to bring the sound in, and hides once they do */
+.v-unmute{
+  position:absolute;z-index:4;left:50%;bottom:14px;transform:translateX(-50%);
+  display:flex;align-items:center;gap:8px;cursor:pointer;
+  padding:10px 16px;border-radius:100px;border:1px solid rgba(255,255,255,.55);
+  background:rgba(36,24,18,.62);color:#fff;
+  backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+  font-family:'Jost',sans-serif;font-size:.8rem;letter-spacing:.02em;
+  animation:hintbob 2.4s ease-in-out infinite;
+}
+.v-unmute[hidden]{display:none}
+.v-unmute svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+@media (prefers-reduced-motion:reduce){.v-unmute{animation:none}}
 
 /* ---------- details card ---------- */
 .card{
@@ -555,7 +569,11 @@ footer p{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.15
     <p class="subtitle rise">Con todo nuestro cariño</p>
     <div class="vframe rise" id="vframe">
       <div class="ph"><svg viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M16 10.5l4.3-2.6a.6.6 0 0 1 .9.5v7.2a.6.6 0 0 1-.9.5L16 13.5z"/></svg><b>Vídeo</b><code>video/video.mp4</code></div>
-      <video controls preload="metadata" playsinline src="video/video.mp4"></video>
+      <video preload="metadata" muted loop playsinline src="video/video.mp4"></video>
+      <button class="v-unmute" id="v-unmute" hidden>
+        <svg viewBox="0 0 24 24"><path d="M11 5 6 9H3v6h3l5 4z"/><path d="M16 9a4 4 0 0 1 0 6"/><path d="M19.5 6.5a8 8 0 0 1 0 11"/></svg>
+        <span>Toca para el sonido</span>
+      </button>
     </div>
   </section>
 
@@ -868,18 +886,59 @@ footer p{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.15
   }
 
   /* ---- video ----
-     Show the player up front and fall back to the placeholder only on a real
-     error. The previous version gated the reveal on `loadedmetadata`, but a
-     display:none video is NOT preloaded by many browsers, so that event never
-     fired and the frame stayed empty ("el video no carga"). Revealing first is
-     self-correcting: a missing file fires `error` and the placeholder returns. */
+     Autoplay, muted, on loop. A paused player showed only a dark first frame
+     with no visible play button (mobile hides the controls until a tap), so it
+     read as "nothing there". Looping muted playback shows the montage moving
+     right away -- no button to hunt for. Reveal up front and fall back to the
+     placeholder only on a real error (a missing file fires `error`). Sound is
+     one tap away, since browsers block *audible* autoplay. */
   var vf = document.getElementById('vframe');
-  var vid = vf.querySelector('video');
+  var vid = vf ? vf.querySelector('video') : null;   // NB: the <section> also has id="video"
+  var unmute = document.getElementById('v-unmute');
   if (vid) {
     vf.classList.add('has-video');
+    vid.muted = true; vid.loop = true;
     vid.addEventListener('error', function () { vf.classList.remove('has-video'); });
-    // Nudge a metadata fetch so a poster frame shows before the first tap; the
-    // reveal no longer depends on it succeeding.
+
+    function tryPlay() { var p = vid.play(); if (p && p.catch) p.catch(function () {}); }
+
+    // Play only while it's on screen; pause when it scrolls away (saves the
+    // battery and data of a video running out of view). Also the reliable moment
+    // to kick autoplay off.
+    // Offer the sound button whenever it is actually playing muted, no matter
+    // which path started it (autoplay, the scroll observer, or a fallback tap).
+    vid.addEventListener('playing', function () {
+      if (unmute) unmute.hidden = !vid.muted;
+    });
+
+    if ('IntersectionObserver' in window) {
+      var vio = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          if (e.isIntersecting) { tryPlay(); }
+          else { vid.pause(); }
+        });
+      }, { threshold: 0.35 });
+      vio.observe(vf);
+    } else {
+      tryPlay();
+    }
+
+    // If autoplay was blocked entirely (some data-saver modes), the first tap
+    // anywhere starts it.
+    var kick = function () { tryPlay(); document.removeEventListener('pointerdown', kick); };
+    document.addEventListener('pointerdown', kick, { once: true });
+
+    if (unmute) {
+      unmute.addEventListener('click', function (e) {
+        e.stopPropagation();
+        vid.muted = false; vid.volume = 1;
+        tryPlay();                    // a user gesture, so audible play is allowed now
+        unmute.hidden = true;
+      });
+    }
+    // tap the video itself to pause / resume
+    vid.addEventListener('click', function () { if (vid.paused) tryPlay(); else vid.pause(); });
+
     try { vid.load(); } catch (e) {}
   }
 
