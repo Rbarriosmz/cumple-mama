@@ -1,0 +1,4 @@
+# Invitación privada: se reparte por enlace, no queremos que salga en buscadores.
+# La página lleva nombre completo, dirección, fecha y un número de teléfono.
+User-agent: *
+Disallow: /

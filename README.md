@@ -48,6 +48,21 @@ El botón de play/pausa aparece solo si el archivo carga correctamente; si no ex
 - WhatsApp cachea la tarjeta de previsualización. Si cambias `og-image.png` después de haber compartido el enlace, la tarjeta antigua puede seguir apareciendo un tiempo.
 - El diseño respeta `prefers-reduced-motion` para quien tenga las animaciones desactivadas.
 
+## Privacidad
+
+GitHub Pages gratuito obliga a que el repositorio sea público, así que **cualquiera con el enlace puede abrir la invitación**, y aquí hay un nombre completo, una dirección, la fecha en que la familia estará allí y un número de WhatsApp.
+
+Por eso la página pide **no ser indexada** por los buscadores, desde dos sitios:
+
+- `<meta name="robots" content="noindex, ...">` en el `index.html`
+- `robots.txt` con `Disallow: /`
+
+Los buscadores serios lo respetan; los rastreadores maliciosos no hacen caso de ninguna de las dos cosas, así que esto reduce la exposición pero no la elimina. **Si quitas esas dos protecciones, la invitación puede acabar en Google** con el teléfono incluido.
+
+Las previsualizaciones de enlaces de WhatsApp y Twitter ignoran `robots`, así que la tarjeta con la imagen sigue funcionando.
+
+Los commits usan el email `noreply` de GitHub a propósito, para no publicar el correo personal.
+
 ## Publicado con
 
 GitHub Pages, sobre la rama `main` (raíz).
