@@ -62,6 +62,10 @@ Recrea la foto familiar de los 50 años: **los abuelos en el centro** y la famil
 
 La guía existe para que la gente se sitúe junto a ellos, no para salir en la imagen. Ese `withGuide` de `paint()` es justo lo que separa una cosa de la otra: si alguna vez lo pones a `true` en la captura, las siluetas acabarán en las fotos de todo el mundo.
 
+**Los abuelos se colocan con los dedos**: pellizcar cambia su tamaño, arrastrar los mueve. Sin eso eran un sticker fijo, y la escala la imponía la web: para encajar junto a ellos había que caminar hacia atrás hasta dar con la distancia correcta. Ahora se ajustan ellos a donde ya está la gente.
+
+**El transform (`tf`) va en fracciones del ancho y el alto, nunca en píxeles.** La vista previa y el fotograma que captura la cámara tienen resoluciones distintas: un desplazamiento en píxeles colocaría a los abuelos en un sitio distinto del que el invitado eligió. Está verificado colocando a 720×1280 y capturando a 1080×1920.
+
 **Las guías se dimensionan desde `centerBox()`**, o sea, desde la altura real a la que se dibujan los abuelos. No es un capricho: cuando cada uno calculaba su tamaño por separado, las siluetas salían un 50% más altas que la pareja y la escena dejaba de leerse como gente de pie junta. Si tocas el tamaño de los abuelos, las guías siguen solas.
 
 **La foto existe en dos formatos**: `abuelos.webp` (194 KB, el que se usa) y `abuelos.png` (1,7 MB, respaldo para navegadores sin WebP). Se carga de forma diferida, solo cuando la sección del photocall se acerca a la pantalla, porque es lo más pesado de la página y la mayoría de invitados no llegarán a abrir la cámara. La captura espera a que termine de cargar: sin esa espera, un toque rápido con mala conexión produciría una foto sin ellos y nadie se enteraría.
