@@ -1057,22 +1057,33 @@ footer p{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.15
     function start() { if (running || reduce) return; running = true; draw(); }
     function stop() { running = false; if (raf) cancelAnimationFrame(raf); raf = null; ctx.clearRect(0, 0, W, H); }
 
-    if (!reduce) {
+    window.addEventListener('resize', size);
+    var spawnTimer = null, away = false;
+
+    // Replays every time the top of the page is reached -- on load AND whenever
+    // the guest scrolls back up -- not just on a hard reload.
+    function startParty() {
+      if (reduce) return;
+      conf.length = 0; balloons.length = 0; sparks.length = 0;
       for (var c = 0; c < 90; c++) conf.push(newConfetti(true));
+      spawning = true; frame = 0;
+      if (spawnTimer) clearTimeout(spawnTimer);
+      // Balloons and fireworks burst for a while; confetti keeps drifting as long
+      // as they stay up top, so there is always something happening at the start.
+      spawnTimer = setTimeout(function () { spawning = false; }, 16000);
       start();
-      window.addEventListener('resize', size);
-      setTimeout(function () { spawning = false; }, 16000);  // stop launching new ones
-      setTimeout(stop, 22000);                                // let the last ones finish, then rest
     }
 
-    // Fade the whole intro away as they scroll into the invitation.
+    // Fade with scroll; stop once well into the page (saves battery), and
+    // re-arm so returning to the top replays the welcome.
     function onScroll() {
-      var op = Math.max(0, 1 - window.scrollY / (window.innerHeight * 0.75));
-      party.style.opacity = op;
-      if (op <= 0.02 && running) stop();
+      var y = window.scrollY, vh = window.innerHeight;
+      party.style.opacity = Math.max(0, 1 - y / (vh * 0.75));
+      if (y > vh * 0.9) { away = true; if (running) stop(); }
+      else if (y < vh * 0.25 && (away || !running)) { startParty(); away = false; }
     }
     window.addEventListener('scroll', onScroll, { passive: true });
-    onScroll();
+    onScroll();   // kicks off the first run at the top
   })();
 
   /* ---- video ----
