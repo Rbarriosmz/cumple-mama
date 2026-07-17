@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Los 60 de María Esther · 2 de agosto de 2026</title>
+<meta name="description" content="María Esther Muñoz Medina cumple 60 años. Domingo 2 de agosto de 2026, 2:00 PM, Caserío Aguada de Palos, Santiago, Ica. ¡Te esperamos!">
+<meta name="theme-color" content="#F4A07A">
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://rbarriosmz.github.io/cumple-mama/">
+<meta property="og:title" content="Los 60 de María Esther 🎉">
+<meta property="og:description" content="Domingo 2 de agosto de 2026 · 2:00 PM · Caserío Aguada de Palos, Santiago, Ica. Toca para ver la invitación y confirmar tu asistencia.">
+<meta property="og:image" content="https://rbarriosmz.github.io/cumple-mama/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Invitación al cumpleaños número 60 de María Esther Muñoz Medina">
+<meta property="og:locale" content="es_ES">
+<meta property="og:site_name" content="Los 60 de María Esther">
+
+<!-- Twitter -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Los 60 de María Esther 🎉">
+<meta name="twitter:description" content="Domingo 2 de agosto de 2026 · 2:00 PM · Caserío Aguada de Palos, Santiago, Ica.">
+<meta name="twitter:image" content="https://rbarriosmz.github.io/cumple-mama/og-image.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --melon:#F4A07A;
+  --melon-deep:#D9714A;
+  --melon-soft:#FBD5C0;
+  --melon-mist:#FDEDE3;
+  --cream:#FFFAF6;
+  --ink:#4A3730;
+  --ink-soft:#8A6F63;
+  --gold:#C9A46B;
+  --shadow:0 18px 50px -12px rgba(160,90,60,.28);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{
+  background:var(--cream);
+  color:var(--ink);
+  font-family:'Jost',system-ui,-apple-system,'Segoe UI',sans-serif;
+  font-weight:300;
+  line-height:1.65;
+  overflow-x:hidden;
+}
+
+/* ---------- decorative background ---------- */
+.glow{position:fixed;border-radius:50%;filter:blur(90px);opacity:.5;pointer-events:none;z-index:0}
+.glow.a{width:60vw;height:60vw;max-width:520px;max-height:520px;background:var(--melon-soft);top:-18vh;right:-22vw}
+.glow.b{width:55vw;height:55vw;max-width:460px;max-height:460px;background:#FCE6D2;bottom:-20vh;left:-25vw}
+
+.wrap{position:relative;z-index:1;max-width:680px;margin:0 auto;padding:0 24px}
+
+/* ---------- music toggle ---------- */
+#music{
+  position:fixed;top:16px;right:16px;z-index:50;
+  width:46px;height:46px;border-radius:50%;
+  border:1px solid rgba(217,113,74,.28);
+  background:rgba(255,250,246,.82);
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  color:var(--melon-deep);cursor:pointer;
+  display:none;place-items:center;
+  box-shadow:0 6px 20px -6px rgba(160,90,60,.3);
+  transition:transform .25s ease,background .25s ease;
+}
+#music.ready{display:grid}
+#music:hover{transform:scale(1.08)}
+#music:active{transform:scale(.94)}
+#music svg{width:18px;height:18px;fill:currentColor}
+#music .pause{display:none}
+#music.playing .play{display:none}
+#music.playing .pause{display:block}
+#music.playing{background:var(--melon-deep);color:#fff;border-color:transparent}
+
+/* ---------- hero ---------- */
+header{
+  min-height:100svh;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;padding:72px 24px 56px;
+}
+.eyebrow{
+  font-size:.72rem;letter-spacing:.42em;text-transform:uppercase;
+  color:var(--melon-deep);font-weight:400;margin-bottom:28px;
+}
+.name{
+  font-family:'Cormorant Garamond',Georgia,serif;
+  font-weight:400;
+  font-size:clamp(2.7rem,11vw,4.6rem);
+  line-height:1.04;
+  letter-spacing:.005em;
+}
+.name .given{display:block}
+.name .surname{
+  display:block;font-size:.44em;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--ink-soft);
+  font-family:'Jost',sans-serif;font-weight:300;margin-top:18px;
+}
+
+/* age medallion */
+.age{margin:38px 0 34px;position:relative;display:inline-grid;place-items:center}
+.age-ring{width:132px;height:132px;transform:rotate(-90deg)}
+.age-ring circle{fill:none;stroke-width:1.2}
+.age-ring .track{stroke:var(--melon-soft)}
+.age-ring .arc{
+  stroke:var(--melon-deep);stroke-linecap:round;
+  stroke-dasharray:408;stroke-dashoffset:408;
+  animation:draw 2.4s .5s cubic-bezier(.22,1,.36,1) forwards;
+}
+@keyframes draw{to{stroke-dashoffset:96}}
+.age-num{
+  position:absolute;font-family:'Cormorant Garamond',serif;
+  font-size:3.5rem;font-weight:300;color:var(--melon-deep);line-height:1;
+}
+.age-label{
+  position:absolute;bottom:-6px;font-size:.6rem;letter-spacing:.34em;
+  text-transform:uppercase;color:var(--ink-soft);
+  background:var(--cream);padding:0 10px;
+}
+
+.flourish{display:flex;align-items:center;gap:14px;color:var(--gold);margin:6px 0 22px}
+.flourish::before,.flourish::after{content:"";height:1px;width:58px;background:linear-gradient(90deg,transparent,var(--gold))}
+.flourish::after{background:linear-gradient(270deg,transparent,var(--gold))}
+.flourish span{font-size:.9rem}
+
+.tagline{
+  font-family:'Cormorant Garamond',serif;font-style:italic;
+  font-size:clamp(1.05rem,4.2vw,1.35rem);color:var(--ink-soft);
+  max-width:26ch;
+}
+
+.scroll-cue{margin-top:52px;color:var(--melon-deep);opacity:.55;animation:bob 2.6s ease-in-out infinite}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(7px)}}
+
+/* ---------- sections ---------- */
+section{padding:64px 0}
+.title{
+  font-size:.7rem;letter-spacing:.4em;text-transform:uppercase;
+  color:var(--melon-deep);text-align:center;margin-bottom:34px;font-weight:400;
+}
+
+/* countdown */
+.count{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;max-width:460px;margin:0 auto}
+.unit{
+  background:#fff;border:1px solid var(--melon-mist);border-radius:16px;
+  padding:18px 6px 14px;text-align:center;box-shadow:0 8px 26px -14px rgba(160,90,60,.3);
+}
+.unit b{
+  display:block;font-family:'Cormorant Garamond',serif;font-weight:400;
+  font-size:clamp(1.7rem,7.5vw,2.4rem);color:var(--melon-deep);line-height:1;
+  font-variant-numeric:tabular-nums;
+}
+.unit i{
+  display:block;font-style:normal;font-size:.58rem;letter-spacing:.2em;
+  text-transform:uppercase;color:var(--ink-soft);margin-top:9px;
+}
+.count-done{
+  text-align:center;font-family:'Cormorant Garamond',serif;font-style:italic;
+  font-size:1.5rem;color:var(--melon-deep);
+}
+
+/* details card */
+.card{
+  background:#fff;border:1px solid var(--melon-mist);border-radius:22px;
+  padding:12px 26px;box-shadow:var(--shadow);
+}
+.row{display:flex;gap:18px;align-items:flex-start;padding:22px 0}
+.row + .row{border-top:1px solid var(--melon-mist)}
+.ico{
+  flex:none;width:40px;height:40px;border-radius:50%;
+  background:var(--melon-mist);color:var(--melon-deep);
+  display:grid;place-items:center;
+}
+.ico svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.row h3{
+  font-size:.62rem;letter-spacing:.26em;text-transform:uppercase;
+  color:var(--ink-soft);font-weight:400;margin-bottom:5px;
+}
+.row p{font-size:1.02rem;color:var(--ink)}
+.row p small{display:block;font-size:.86rem;color:var(--ink-soft);margin-top:3px}
+
+/* buttons */
+.actions{display:grid;gap:13px;margin-top:34px}
+.btn{
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  padding:17px 22px;border-radius:100px;
+  font-family:'Jost',sans-serif;font-size:.82rem;font-weight:400;
+  letter-spacing:.14em;text-transform:uppercase;text-decoration:none;
+  border:1px solid transparent;cursor:pointer;
+  transition:transform .2s ease,box-shadow .2s ease,background .2s ease;
+}
+.btn svg{width:17px;height:17px;flex:none}
+.btn:active{transform:scale(.97)}
+.btn-primary{
+  background:linear-gradient(135deg,var(--melon) 0%,var(--melon-deep) 100%);
+  color:#fff;box-shadow:0 12px 30px -10px rgba(217,113,74,.65);
+}
+.btn-primary:hover{box-shadow:0 16px 38px -10px rgba(217,113,74,.75);transform:translateY(-2px)}
+.btn-primary svg{fill:currentColor}
+.btn-ghost{
+  background:#fff;color:var(--melon-deep);border-color:rgba(217,113,74,.3);
+}
+.btn-ghost:hover{background:var(--melon-mist);transform:translateY(-2px)}
+.btn-ghost svg{fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+
+.note{
+  text-align:center;font-size:.78rem;color:var(--ink-soft);
+  margin-top:18px;font-style:italic;
+}
+
+footer{
+  text-align:center;padding:56px 24px 68px;
+  border-top:1px solid var(--melon-mist);margin-top:48px;
+}
+footer .heart{color:var(--melon-deep);font-size:1.1rem}
+footer p{
+  font-family:'Cormorant Garamond',serif;font-style:italic;
+  font-size:1.15rem;color:var(--ink-soft);margin-top:10px;
+}
+
+/* ---------- entrance animations ---------- */
+.rise{opacity:0;transform:translateY(26px);transition:opacity .9s cubic-bezier(.22,1,.36,1),transform .9s cubic-bezier(.22,1,.36,1)}
+.rise.in{opacity:1;transform:none}
+header .rise{transition-delay:var(--d,0s)}
+
+@media (prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important}
+  .rise{opacity:1;transform:none}
+  .age-ring .arc{stroke-dashoffset:96}
+}
+@media (min-width:560px){
+  .actions{grid-template-columns:1fr 1fr}
+  section{padding:76px 0}
+}
+</style>
+</head>
+<body>
+
+<div class="glow a"></div>
+<div class="glow b"></div>
+
+<button id="music" aria-label="Reproducir música de fondo">
+  <svg class="play" viewBox="0 0 24 24"><path d="M8 5.14v13.72a1 1 0 0 0 1.52.85l11.14-6.86a1 1 0 0 0 0-1.7L9.52 4.29A1 1 0 0 0 8 5.14z"/></svg>
+  <svg class="pause" viewBox="0 0 24 24"><path d="M7 4h3.5v16H7zM13.5 4H17v16h-3.5z"/></svg>
+</button>
+<audio id="audio" loop preload="none" src="musica.mp3"></audio>
+
+<header>
+  <p class="eyebrow rise" style="--d:.1s">Con mucho cariño, te invitamos</p>
+
+  <h1 class="name rise" style="--d:.25s">
+    <span class="given">María Esther</span>
+    <span class="surname">Muñoz Medina</span>
+  </h1>
+
+  <div class="age rise" style="--d:.45s">
+    <svg class="age-ring" viewBox="0 0 132 132" aria-hidden="true">
+      <circle class="track" cx="66" cy="66" r="65"></circle>
+      <circle class="arc" cx="66" cy="66" r="65"></circle>
+    </svg>
+    <span class="age-num">60</span>
+    <span class="age-label">Años</span>
+  </div>
+
+  <div class="flourish rise" style="--d:.6s"><span>✦</span></div>
+
+  <p class="tagline rise" style="--d:.7s">Seis décadas de amor, fuerza y familia. Ven a celebrarlas con nosotros.</p>
+
+  <div class="scroll-cue rise" style="--d:.95s" aria-hidden="true">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M19 12l-7 7-7-7"/></svg>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <section id="countdown">
+    <h2 class="title rise">Faltan</h2>
+    <div class="count rise" id="count">
+      <div class="unit"><b id="d">--</b><i>Días</i></div>
+      <div class="unit"><b id="h">--</b><i>Horas</i></div>
+      <div class="unit"><b id="m">--</b><i>Min</i></div>
+      <div class="unit"><b id="s">--</b><i>Seg</i></div>
+    </div>
+  </section>
+
+  <section id="detalles">
+    <h2 class="title rise">Los detalles</h2>
+    <div class="card rise">
+      <div class="row">
+        <div class="ico"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 11h18"/></svg></div>
+        <div>
+          <h3>Fecha</h3>
+          <p>Domingo 2 de agosto de 2026</p>
+        </div>
+      </div>
+      <div class="row">
+        <div class="ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg></div>
+        <div>
+          <h3>Hora</h3>
+          <p>2:00 PM<small>Hora de Perú</small></p>
+        </div>
+      </div>
+      <div class="row">
+        <div class="ico"><svg viewBox="0 0 24 24"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
+        <div>
+          <h3>Lugar</h3>
+          <p>Caserío Aguada de Palos, s/n<small>Distrito de Santiago · Ica, Perú</small></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="actions rise">
+      <a class="btn btn-primary" id="rsvp" href="#" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22h.01c5.46 0 9.91-4.45 9.91-9.91S17.5 2 12.04 2zm5.8 14.16c-.25.69-1.43 1.32-1.98 1.4-.53.08-1.19.11-1.92-.12-.44-.14-1.01-.33-1.74-.64-3.06-1.32-5.06-4.4-5.21-4.6-.15-.2-1.25-1.66-1.25-3.17s.79-2.25 1.07-2.56c.28-.31.61-.38.81-.38.2 0 .41 0 .58.01.19.01.44-.07.69.53.25.6.86 2.11.94 2.26.08.15.13.33.03.53-.1.2-.15.33-.3.5-.15.18-.31.39-.44.53-.15.15-.3.31-.13.61.17.3.76 1.25 1.63 2.03 1.12 1 2.06 1.31 2.36 1.46.3.15.47.13.65-.08.18-.2.75-.87.95-1.17.2-.3.4-.25.68-.15.28.1 1.78.84 2.08.99.3.15.5.23.58.35.07.13.07.72-.18 1.41z"/></svg>
+        Confirmo asistencia
+      </a>
+      <a class="btn btn-ghost" id="maps" href="#" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        Cómo llegar
+      </a>
+    </div>
+    <p class="note rise">Confírmanos por WhatsApp para preparar todo con tiempo</p>
+  </section>
+
+</main>
+
+<footer>
+  <span class="heart">✦</span>
+  <p>Te esperamos</p>
+</footer>
+
+<script>
+(function () {
+  'use strict';
+
+  /* ---- links ---- */
+  var PLACE = 'Caserío Aguada de Palos, Santiago, Ica, Perú';
+  document.getElementById('maps').href =
+    'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(PLACE);
+  document.getElementById('rsvp').href =
+    'https://wa.me/34613337554?text=' +
+    encodeURIComponent('¡Hola! Confirmo mi asistencia al cumpleaños número 60 de María Esther 🎉');
+
+  /* ---- countdown: anchored to Peru time (UTC-5) ---- */
+  var TARGET = new Date('2026-08-02T14:00:00-05:00').getTime();
+  var box = document.getElementById('count');
+  var out = { d: document.getElementById('d'), h: document.getElementById('h'),
+              m: document.getElementById('m'), s: document.getElementById('s') };
+  var pad = function (n) { return n < 10 ? '0' + n : '' + n; };
+
+  function tick() {
+    var gap = TARGET - Date.now();
+    if (gap <= 0) {
+      box.innerHTML = '<p class="count-done">¡Hoy es el gran día!</p>';
+      clearInterval(timer);
+      return;
+    }
+    var sec = Math.floor(gap / 1000);
+    out.d.textContent = Math.floor(sec / 86400);
+    out.h.textContent = pad(Math.floor(sec / 3600) % 24);
+    out.m.textContent = pad(Math.floor(sec / 60) % 60);
+    out.s.textContent = pad(sec % 60);
+  }
+  tick();
+  var timer = setInterval(tick, 1000);
+
+  /* ---- entrance animations ---- */
+  var risers = document.querySelectorAll('.rise');
+  if ('IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+      });
+    }, { threshold: 0.15, rootMargin: '0px 0px -40px' });
+    risers.forEach(function (el) { io.observe(el); });
+  } else {
+    risers.forEach(function (el) { el.classList.add('in'); });
+  }
+
+  /* ---- optional background music: button appears only if the file loads ---- */
+  var audio = document.getElementById('audio');
+  var btn = document.getElementById('music');
+
+  audio.addEventListener('canplay', function () { btn.classList.add('ready'); });
+  audio.addEventListener('error', function () { btn.classList.remove('ready'); });
+
+  btn.addEventListener('click', function () {
+    if (audio.paused) {
+      audio.play().then(function () {
+        btn.classList.add('playing');
+        btn.setAttribute('aria-label', 'Pausar música de fondo');
+      }).catch(function () { btn.classList.remove('ready'); });
+    } else {
+      audio.pause();
+      btn.classList.remove('playing');
+      btn.setAttribute('aria-label', 'Reproducir música de fondo');
+    }
+  });
+
+  // preload="none" means we must ask for metadata to know whether musica.mp3 exists
+  audio.load();
+})();
+</script>
+</body>
+</html>
