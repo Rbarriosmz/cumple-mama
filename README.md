@@ -52,17 +52,19 @@ El botón de play/pausa aparece solo si el archivo carga correctamente; si no ex
 
 Un botón abre la cámara del móvil y dibuja encima un marco con «60 años · María Esther · 2 · Agosto · 2026». El invitado hace la foto y la guarda en su carrete.
 
-Se dibuja en tres capas, y la diferencia entre ellas importa:
+Recrea la foto familiar de los 50 años: **los abuelos en el centro** y la familia colocándose a los lados. Se dibuja en tres capas, y la diferencia entre ellas importa:
 
 | Capa | ¿Sale en la foto guardada? |
 |---|---|
-| **Los abuelos** (`fotos/abuelo.png`, `fotos/abuela.png`), uno a cada lado | Sí |
-| **La guía**: dos siluetas discontinuas marcando dónde colocarse | **No** — solo se ve al encuadrar |
+| **Los abuelos** (`fotos/abuelos.png`), los dos juntos, en el centro | Sí |
+| **La guía**: dos siluetas de cuerpo entero marcando dónde colocarse | **No** — solo se ve al encuadrar |
 | **El marco** y los textos | Sí |
 
-La guía existe para que la gente se sitúe entre los abuelos, no para salir en la imagen. Ese `withGuide` de `paint()` es justo lo que separa una cosa de la otra: si alguna vez lo pones a `true` en la captura, las siluetas acabarán en las fotos de todo el mundo.
+La guía existe para que la gente se sitúe junto a ellos, no para salir en la imagen. Ese `withGuide` de `paint()` es justo lo que separa una cosa de la otra: si alguna vez lo pones a `true` en la captura, las siluetas acabarán en las fotos de todo el mundo.
 
-Cómo preparar los recortes de los abuelos: [`fotos/LEEME.md`](fotos/LEEME.md). Necesitan el fondo borrado; un `.jpg` normal saldría con su rectángulo encima de la cámara.
+**Las guías se dimensionan desde `centerBox()`**, o sea, desde la altura real a la que se dibujan los abuelos. No es un capricho: cuando cada uno calculaba su tamaño por separado, las siluetas salían un 50% más altas que la pareja y la escena dejaba de leerse como gente de pie junta. Si tocas el tamaño de los abuelos, las guías siguen solas.
+
+Cómo preparar el recorte: [`fotos/LEEME.md`](fotos/LEEME.md). Necesita el fondo borrado; un `.jpg` normal saldría con su rectángulo encima de la cámara.
 
 **La foto no sale del dispositivo.** No se sube a ninguna parte, y esto no es una limitación temporal: para que la web escribiera en este repositorio habría que incrustar un token de escritura de GitHub en el `index.html`, que es público. Cualquiera podría cogerlo y borrar el repo. Si algún día quieres recibir las fotos automáticamente, hace falta un servidor intermedio que guarde el token — no se puede hacer desde una página estática.
 

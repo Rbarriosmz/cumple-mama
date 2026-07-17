@@ -6,29 +6,36 @@ Esta carpeta guarda dos cosas distintas: las fotos de la **galería** y los reco
 
 # 1. Los abuelos del photocall
 
-Para que aparezcan a los lados y los invitados se hagan fotos con ellos:
+**Un solo archivo:**
 
-| Archivo | Dónde aparece |
-|---|---|
-| `abuelo.png` | Lado izquierdo |
-| `abuela.png` | Lado derecho |
+```
+abuelos.png
+```
 
-**Tienen que ser PNG con el fondo borrado** (transparente). Un `.jpg` normal saldría con su fondo rectangular encima de la cámara y quedaría fatal.
+Son **los dos juntos, en una misma imagen**, y aparecen en el centro. A los lados, dos siluetas discontinuas marcan dónde colocarse la familia. Así se recrea la foto de los 50 años: ellos en medio, los hijos alrededor.
 
-## Cómo borrar el fondo
+**Tiene que ser PNG con el fondo borrado** (transparente). Un `.jpg` normal saldría con su fondo rectangular encima de la cámara y quedaría fatal.
 
-- **remove.bg** — subes la foto y te la devuelve recortada. Gratis y sin instalar nada. Descárgala en **PNG**, no en JPG, o pierdes la transparencia.
-- **iPhone**: abre la foto, mantén pulsado sobre la persona hasta que brille, «Copiar» y pégala en una app que guarde PNG.
-- **Google Fotos / Samsung**: buscar «recortar sujeto» o «borrar fondo».
+## Cómo prepararlo
 
-## Qué foto elegir
+1. **Elige una foto donde estén los dos de pie y juntos.** La de los 50 años sirve muy bien.
+2. **Recorta primero** para quedarte solo con ellos dos. Si en la foto hay más gente, quítala en este paso.
+3. **Borra el fondo** y guarda en PNG:
+   - **remove.bg** — subes la foto y te la devuelve recortada. Gratis, sin instalar nada. Descarga en **PNG**, no en JPG, o pierdes la transparencia.
+   - **iPhone**: mantén pulsado sobre ellos hasta que brillen, «Copiar», y pega en una app que guarde PNG.
+   - **Google Fotos / Samsung**: busca «recortar sujeto» o «borrar fondo».
 
-- **De cuerpo entero, mejor que un retrato.** El tamaño se calcula con la altura, así que una figura alta y estrecha se ve a tamaño natural junto a los invitados. Una foto de medio cuerpo choca contra el límite de anchura y sale más pequeña.
-- **Recorta lo que sobre** antes de subirla. Si el PNG lleva mucho margen transparente alrededor, la persona aparece más pequeña y despegada del borde, porque el margen cuenta como parte de la imagen.
-- Que la persona esté **de pie y mirando a cámara** si puede ser.
+## Qué foto funciona mejor
+
+- **Cuanto más cuerpo entero, mejor.** El tamaño se calcula con la altura. Una foto de medio cuerpo choca contra el límite de anchura y sale más pequeña de lo que debería.
+- **Recorta el margen sobrante.** Si el PNG lleva mucho espacio transparente alrededor, ellos salen más pequeños, porque el margen cuenta como parte de la imagen.
 - Peso: por debajo de ~800 KB.
 
-Si solo subes uno de los dos, ese lado se ocupa y el otro se queda vacío. Si no subes ninguno, el photocall funciona igual, solo con el marco.
+Si el archivo no existe, el photocall funciona igual: solo el marco y las guías.
+
+## Ajustar el tamaño
+
+Las siluetas guía se calculan **a partir de la altura de esta imagen**, para que todos salgan a la misma escala. Si al poner la foto real se ven grandes o pequeños, se toca `centerBox()` en el `index.html`: los números `0.56` (anchura máxima) y `0.66` (altura máxima), en fracción del tamaño de la foto.
 
 ---
 
