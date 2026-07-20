@@ -736,9 +736,13 @@ footer p{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.4r
   'use strict';
 
   /* ---- links ---- */
-  var PLACE = 'Caserío Aguada de Palos, Santiago, Ica, Perú';
+  // Exact venue coordinates (14°18'31.2"S 75°40'37.6"W). A rural caserío has no
+  // street address, so a text search drops the pin in the wrong place; these put
+  // it on the spot. Uses the directions endpoint so "Cómo llegar" actually opens
+  // turn-by-turn navigation from wherever the guest is.
+  var VENUE = '-14.308667,-75.677111';
   document.getElementById('maps').href =
-    'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(PLACE);
+    'https://www.google.com/maps/dir/?api=1&destination=' + encodeURIComponent(VENUE);
   document.getElementById('rsvp').href =
     'https://wa.me/34613337554?text=' +
     encodeURIComponent('¡Hola! Confirmo mi asistencia al cumpleaños número 60 de María Esther 🎉');
