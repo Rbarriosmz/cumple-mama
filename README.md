@@ -100,7 +100,7 @@ Detalles de implementación:
 
 ## Privacidad
 
-GitHub Pages gratuito obliga a que el repositorio sea público, así que **cualquiera con el enlace puede abrir la invitación**, y aquí hay un nombre completo, una dirección, la fecha en que la familia estará allí y un número de WhatsApp.
+GitHub Pages gratuito obliga a que el repositorio sea público, así que **cualquiera con el enlace puede abrir la invitación**, y aquí hay un nombre completo, la ubicación exacta (coordenadas) y la fecha en que la familia estará allí. (El número de WhatsApp ya no aparece: se quitó junto con el botón de confirmar asistencia.)
 
 Por eso la página pide **no ser indexada** por los buscadores, desde dos sitios:
 
